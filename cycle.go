@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"sync"
 
@@ -93,7 +94,7 @@ func getHRData(p gatt.Peripheral) {
 			resultCh <- err.Error()
 		}
 		heartRate := binary.LittleEndian.Uint16(append([]byte(data[1:2]), []byte{0}...))
-		logger.Printf("BPM: %d: data %v\n", heartRate, data)
+		logger.Printf("BPM: %d\n", heartRate)
 	})
 	<-resultCh
 }
@@ -118,6 +119,7 @@ func getSpeedData(p gatt.Peripheral) {
 	p.DiscoverDescriptors(nil, ch)
 
 	resultCh := make(chan string)
+	values := make([]SpeedSensorData, 2)
 	p.SetNotifyValue(ch, func(ch *gatt.Characteristic, data []byte, err error) {
 		if err != nil {
 			resultCh <- err.Error()
@@ -127,9 +129,25 @@ func getSpeedData(p gatt.Peripheral) {
 		revolutions := binary.LittleEndian.Uint32(append([]byte(data[offset:])))
 		offset += 4
 		eventTime := binary.LittleEndian.Uint16(append([]byte(data[offset:])))
-		logger.Printf("Revolutions: %d, Time: %fs: data %v\n", revolutions, float32(eventTime)/1024, data)
+		values = values[1:]
+		values = append(values, SpeedSensorData{Revolutions: revolutions, EventTime: eventTime})
+		var time uint16
+		if values[1].EventTime >= values[0].EventTime {
+			time = values[1].EventTime - values[0].EventTime
+		} else {
+			time = 65535 - values[0].EventTime + values[1].EventTime + 1
+		}
+		rps := float32(values[1].Revolutions-values[0].Revolutions) / (float32(time) * 1024)
+		speed := rps * math.Pi * (622 + 28*2) * 1000 * 3.6
+		fmt.Printf("Speed: %f km/h\n", speed)
 	})
 	<-resultCh
+}
+
+// SpeedSensorData is data from the sensor
+type SpeedSensorData struct {
+	Revolutions uint32
+	EventTime   uint16
 }
 
 func onPeriphDisconnected(p gatt.Peripheral, err error) {
