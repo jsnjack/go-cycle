@@ -6,66 +6,95 @@ import (
 	"log"
 	"math"
 	"os"
-	"sync"
 
 	"github.com/paypal/gatt"
 	"github.com/paypal/gatt/examples/option"
 )
 
-// List of services https://www.bluetooth.com/specifications/gatt/services
+// Connected contains information about connected devices
+var Connected ConnectedDevices
 
-// MOOVHR is the ID of a pecific MOOH HR device
-const MOOVHR = "CC:78:AB:26:B2:73"
+// IgnoredDevices is a list of not interesting devices
+var IgnoredDevices []string
 
-// SPEEDSENSOR is the ID of powertap spd 53292
-const SPEEDSENSOR = "E7:C6:C3:FC:FC:97"
+// Logger is the main logger
+var Logger *log.Logger
 
-var connected int
-
-var wg sync.WaitGroup
+func init() {
+	Logger = log.New(os.Stdout, "", log.Lmicroseconds|log.Lshortfile)
+}
 
 func onStateChanged(d gatt.Device, s gatt.State) {
-	fmt.Println("State:", s)
+	Logger.Println("State:", s)
 	switch s {
 	case gatt.StatePoweredOn:
-		fmt.Println("Scanning...")
+		Logger.Println("Scanning...")
 		d.Scan([]gatt.UUID{}, false)
 		return
 	default:
+		Logger.Println("Stop scanning")
 		d.StopScanning()
 	}
 }
 
 func onPeriphDiscovered(p gatt.Peripheral, a *gatt.Advertisement, rssi int) {
-	// Move HR
-	// https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.heart_rate.xml
-	switch p.ID() {
-	case MOOVHR, SPEEDSENSOR:
-		fmt.Printf("Found %s\n", p.Name())
-		p.Device().Connect(p)
-		connected = connected + 1
-	default:
-		return
-	}
-
-	// Stop scanning once we've got the peripheral we're looking for.
-	if connected == 2 {
-		p.Device().StopScanning()
+	Logger.Printf("Discovered %s %s\n", p.Name(), p.ID())
+	if IsInterestingPeripheral(p.ID()) {
+		if p.Name() != "" {
+			Logger.Printf("Connecting to %s...\n", p.ID())
+			p.Device().Connect(p)
+		} else {
+			Logger.Printf("Ignoring %s\n", p.ID())
+			IgnoredDevices = append(IgnoredDevices, p.ID())
+		}
 	}
 }
 
 func onPeriphConnected(p gatt.Peripheral, err error) {
-	fmt.Printf("Connected %s\n", p.Name())
+	logger := log.New(os.Stdout, fmt.Sprintf("%s ", p.ID()), log.Lmicroseconds|log.Lshortfile)
+	logger.Printf("Connected %s\n", p.ID())
 
-	if err := p.SetMTU(500); err != nil {
-		fmt.Printf("Failed to set MTU, err: %s\n", err)
+	pType, err := GetPeripheralType(p)
+	if err != nil {
+		IgnoredDevices = append(IgnoredDevices, p.ID())
+		logger.Println(err.Error())
+		p.Device().CancelConnection(p)
+		return
+	}
+	switch pType {
+	case HRPeripheral:
+		if !Connected.HRSensor {
+			logger.Printf("Found %s\n", p.Name())
+			Connected.HRSensorID = p.ID()
+			Connected.HRSensor = true
+			if err := p.SetMTU(500); err != nil {
+				logger.Printf("Failed to set MTU, err: %s\n", err)
+			}
+			go getHRData(p)
+		} else {
+			logger.Println("HR sensor already connected")
+		}
+	case SpeedPeripheral:
+		if !Connected.SpeedSensor {
+			logger.Printf("Found %s\n", p.Name())
+			Connected.SpeedSensorID = p.ID()
+			Connected.SpeedSensor = true
+			if err := p.SetMTU(500); err != nil {
+				logger.Printf("Failed to set MTU, err: %s\n", err)
+			}
+			go getSpeedData(p)
+		} else {
+			logger.Println("Speed sensor already connected")
+		}
+	default:
+		p.Device().CancelConnection(p)
+		IgnoredDevices = append(IgnoredDevices, p.ID())
+		logger.Printf("Ignoring device %s", p.Name())
 	}
 
-	switch p.ID() {
-	case MOOVHR:
-		go getHRData(p)
-	case SPEEDSENSOR:
-		go getSpeedData(p)
+	if Connected.AllConnected() {
+		logger.Println("All devices connected. Stop scanning")
+		p.Device().StopScanning()
 	}
 }
 
@@ -151,8 +180,18 @@ type SpeedSensorData struct {
 }
 
 func onPeriphDisconnected(p gatt.Peripheral, err error) {
-	wg.Done()
 	fmt.Printf("Disconnected %s\n", p.Name())
+	switch p.ID() {
+	case Connected.HRSensorID:
+		Connected.HRSensor = false
+	case Connected.SpeedSensorID:
+		Connected.SpeedSensor = false
+	default:
+		Logger.Printf("Unsupported device %s", p.Name())
+		return
+	}
+	Logger.Println("Scanning for device to reconnect...")
+	p.Device().Scan([]gatt.UUID{}, false)
 }
 
 // GetService returns service with specified name
@@ -186,9 +225,10 @@ func GetCharacteristic(p gatt.Peripheral, service *gatt.Service, uuid gatt.UUID)
 }
 
 func main() {
+	Logger.Println("Starting...")
 	d, err := gatt.NewDevice(option.DefaultClientOptions...)
 	if err != nil {
-		log.Fatalf("Failed to open device, err: %s\n", err)
+		Logger.Fatalf("Failed to open device, err: %s\n", err)
 		return
 	}
 
@@ -199,8 +239,8 @@ func main() {
 		gatt.PeripheralDisconnected(onPeriphDisconnected),
 	)
 
-	wg.Add(2)
+	mainLoop := make(chan bool)
 	d.Init(onStateChanged)
-	wg.Wait()
-	fmt.Println("Done")
+	<-mainLoop
+	Logger.Println("Done")
 }
