@@ -166,9 +166,14 @@ func getSpeedData(p gatt.Peripheral) {
 		} else {
 			time = 65535 - values[0].EventTime + values[1].EventTime + 1
 		}
-		rps := float32(values[1].Revolutions-values[0].Revolutions) / (float32(time) * 1024)
+		rps := float64(values[1].Revolutions-values[0].Revolutions) / (float64(time) * 1024)
 		speed := rps * math.Pi * (622 + 28*2) * 1000 * 3.6
-		fmt.Printf("Speed: %f km/h\n", speed)
+		if !math.IsInf(speed, 0) {
+			if math.IsNaN(speed) {
+				speed = 0
+			}
+			fmt.Printf("Speed: %f km/h\n", speed)
+		}
 	})
 	<-resultCh
 }
