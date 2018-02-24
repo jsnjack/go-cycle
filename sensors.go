@@ -140,7 +140,6 @@ func HandleSpeedData(p gatt.Peripheral) {
 func GetPeripheralType(p gatt.Peripheral) (PeripheralType, error) {
 	Logger.Println("Discovering services")
 	services, err := p.DiscoverServices(nil)
-	Logger.Println(services)
 	if err != nil {
 		fmt.Printf("Peripheral %s: Failed to discover services, err: %s\n", p.Name(), err)
 		return 0, err

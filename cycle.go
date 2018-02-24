@@ -125,8 +125,6 @@ func main() {
 		gatt.PeripheralDisconnected(onPeriphDisconnected),
 	)
 
-	mainLoop := make(chan bool)
 	d.Init(onStateChanged)
-	<-mainLoop
-	Logger.Println("Done")
+	select {}
 }
