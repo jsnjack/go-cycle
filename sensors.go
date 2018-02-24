@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
@@ -30,6 +31,16 @@ type ConnectedDevices struct {
 	SpeedSensor   bool
 	HRSensorID    string
 	SpeedSensorID string
+}
+
+// HRMessage is a message from the HR sensor
+type HRMessage struct {
+	BPM uint16
+}
+
+// SpeedMessage is a message from the Speed sensor
+type SpeedMessage struct {
+	Speed float64
 }
 
 // AllConnected returns if all devices were connected
@@ -81,6 +92,13 @@ func HandleHRData(p gatt.Peripheral) {
 		}
 		heartRate := binary.LittleEndian.Uint16(append([]byte(data[1:2]), []byte{0}...))
 		logger.Printf("BPM: %d\n", heartRate)
+		msg := HRMessage{BPM: heartRate}
+		msgB, err := json.Marshal(msg)
+		if err != nil {
+			logger.Println(err)
+		} else {
+			BroadcastChannel <- msgB
+		}
 	})
 	<-resultCh
 }
@@ -131,6 +149,13 @@ func HandleSpeedData(p gatt.Peripheral) {
 				speed = 0
 			}
 			fmt.Printf("Speed: %f km/h\n", speed)
+			msg := SpeedMessage{Speed: speed}
+			msgB, err := json.Marshal(msg)
+			if err != nil {
+				logger.Println(err)
+			} else {
+				BroadcastChannel <- msgB
+			}
 		}
 	})
 	<-resultCh

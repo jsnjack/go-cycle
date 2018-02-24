@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/paypal/gatt"
@@ -23,6 +24,19 @@ func init() {
 
 func main() {
 	Logger.Println("Starting...")
+
+	go func() {
+		// Websocket section
+		http.HandleFunc("/ws", handleWSConnection)
+
+		go BroadcastMessages()
+
+		Logger.Println("Starting ws server on port 8000...")
+		err := http.ListenAndServe(":8000", nil)
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
 
 	// Bluetooth section
 	d, err := gatt.NewDevice(option.DefaultClientOptions...)
