@@ -23,8 +23,6 @@ func init() {
 }
 
 func main() {
-	Logger.Println("Starting...")
-
 	go func() {
 		// Websocket section
 		http.HandleFunc("/ws", handleWSConnection)

@@ -22,9 +22,7 @@ var upgrader = websocket.Upgrader{
 func BroadcastMessages() {
 	for {
 		msg := <-BroadcastChannel
-		Logger.Println("Message arrived")
 		for _, client := range clients {
-			Logger.Println("Delivering message")
 			err := client.WriteMessage(websocket.TextMessage, msg)
 			if err != nil {
 				Logger.Printf("error: %v\n", err)
@@ -37,9 +35,8 @@ func BroadcastMessages() {
 
 func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 	// Upgrade initial GET request to a websocket
-	Logger.Println("Establishing connection")
+	Logger.Println("New ws connection")
 	ws, err := upgrader.Upgrade(w, r, nil)
-	Logger.Println("Establishing connection 2")
 
 	if err != nil {
 		Logger.Fatal(err)
@@ -50,7 +47,6 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 }
 
 func removeConnection(conn *websocket.Conn) {
-	Logger.Println("Closing connection")
 	var updatedClients []*websocket.Conn
 	for _, item := range clients {
 		if item != conn {

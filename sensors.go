@@ -67,21 +67,19 @@ type SpeedSensorData struct {
 
 // HandleHRData handles HR data from the HR sensor
 func HandleHRData(p gatt.Peripheral) {
-	logger := log.New(os.Stdout, "HR ", log.Lmicroseconds|log.Lshortfile)
+	Logger.Println("Setting up Heart Rate sensor")
 	defer p.Device().CancelConnection(p)
 	service, err := GetService(p, gatt.UUID16(0x180d))
 	if err != nil {
-		logger.Println(err)
+		Logger.Println(err)
 		return
 	}
-	logger.Printf("Service %s found\n", service.Name())
 
 	ch, err := GetCharacteristic(p, service, gatt.UUID16(0x2a37))
 	if err != nil {
-		logger.Println(err)
+		Logger.Println(err)
 		return
 	}
-	logger.Printf("Characteristic %s found\n", ch.Name())
 
 	p.DiscoverDescriptors(nil, ch)
 
@@ -91,11 +89,11 @@ func HandleHRData(p gatt.Peripheral) {
 			resultCh <- err.Error()
 		}
 		heartRate := binary.LittleEndian.Uint16(append([]byte(data[1:2]), []byte{0}...))
-		logger.Printf("BPM: %d\n", heartRate)
+		Logger.Printf("BPM: %d\n", heartRate)
 		msg := HRMessage{BPM: heartRate}
 		msgB, err := json.Marshal(msg)
 		if err != nil {
-			logger.Println(err)
+			Logger.Println(err)
 		} else {
 			BroadcastChannel <- msgB
 		}
@@ -105,21 +103,19 @@ func HandleHRData(p gatt.Peripheral) {
 
 // HandleSpeedData handles speed data from the Speed sensor
 func HandleSpeedData(p gatt.Peripheral) {
-	logger := log.New(os.Stdout, "SP ", log.Lmicroseconds|log.Lshortfile)
+	Logger.Println("Setting up Speed sensor")
 	defer p.Device().CancelConnection(p)
 	service, err := GetService(p, gatt.UUID16(0x1816))
 	if err != nil {
-		logger.Println(err)
+		Logger.Println(err)
 		return
 	}
-	logger.Printf("Service %s found\n", service.Name())
 
 	ch, err := GetCharacteristic(p, service, gatt.UUID16(0x2A5B))
 	if err != nil {
-		logger.Println(err)
+		Logger.Println(err)
 		return
 	}
-	logger.Printf("Characteristic %s found\n", ch.Name())
 
 	p.DiscoverDescriptors(nil, ch)
 
@@ -152,7 +148,7 @@ func HandleSpeedData(p gatt.Peripheral) {
 			msg := SpeedMessage{Speed: speed}
 			msgB, err := json.Marshal(msg)
 			if err != nil {
-				logger.Println(err)
+				Logger.Println(err)
 			} else {
 				BroadcastChannel <- msgB
 			}
