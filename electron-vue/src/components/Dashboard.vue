@@ -1,32 +1,31 @@
 <template>
-    <div>
-    <h1>go-cycle</h1>
-    <table>
-        <tr>
-            <td>
-                <HRIcon class="icon"/>
-            </td>
-            <td>
-                {{ hrBPM }} bpm
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <SpeedIcon class="icon"/>
-            </td>
-            <td>
-                {{ speed }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <DistanceIcon class="icon"/>
-            </td>
-            <td>
-                {{ distance }}
-            </td>
-        </tr>
-    </table>
+    <div id="dashboard">
+        <table>
+            <tr>
+                <td>
+                    <HRIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ hrBPM }} bpm
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <SpeedIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ speed }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <DistanceIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ distance }}
+                </td>
+            </tr>
+        </table>
     </div>
 </template>
 <script>
@@ -102,9 +101,23 @@ export default {
 </script>
 
 <style scoped>
+table {
+    opacity: 0.5;
+    background: rgb(36, 36, 36);
+    padding: 2rem;
+}
 .icon {
     height: 5rem;
     width: 5rem;
+    margin: 0.25rem 2rem 0.25rem 0.25rem;
+    fill: white;
 }
+
+.measurement {
+    vertical-align: middle;
+    font-size: 3rem;
+    color: white;
+}
+
 </style>
 
