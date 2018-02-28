@@ -33,14 +33,21 @@ type ConnectedDevices struct {
 	SpeedSensorID string
 }
 
+// WSMessage is a message to deliver over websocket to the electorn app
+type WSMessage struct {
+	Type string      `json:"type"`
+	Data interface{} `json:"data"`
+}
+
 // HRMessage is a message from the HR sensor
 type HRMessage struct {
-	BPM uint16
+	BPM uint16 `json:"bpm"`
 }
 
 // SpeedMessage is a message from the Speed sensor
 type SpeedMessage struct {
-	Speed float64
+	Revolutions uint32  `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
+	RevPerSec   float64 `json:"rev_per_sec"` // Revolutions per second, for calculating speed
 }
 
 // AllConnected returns if all devices were connected
@@ -90,7 +97,8 @@ func HandleHRData(p gatt.Peripheral) {
 		}
 		heartRate := binary.LittleEndian.Uint16(append([]byte(data[1:2]), []byte{0}...))
 		Logger.Printf("BPM: %d\n", heartRate)
-		msg := HRMessage{BPM: heartRate}
+		hrMsg := HRMessage{BPM: heartRate}
+		msg := WSMessage{Type: "hr_data", Data: hrMsg}
 		msgB, err := json.Marshal(msg)
 		if err != nil {
 			Logger.Println(err)
@@ -143,9 +151,11 @@ func HandleSpeedData(p gatt.Peripheral) {
 		if !math.IsInf(speed, 0) {
 			if math.IsNaN(speed) {
 				speed = 0
+				rps = 0
 			}
 			fmt.Printf("Speed: %f km/h\n", speed)
-			msg := SpeedMessage{Speed: speed}
+			cscMsg := SpeedMessage{Revolutions: values[1].Revolutions - values[0].Revolutions, RevPerSec: rps}
+			msg := WSMessage{Type: "csc_data", Data: cscMsg}
 			msgB, err := json.Marshal(msg)
 			if err != nil {
 				Logger.Println(err)
