@@ -1,13 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import settings from "./modules/settings";
+import state from "./state";
+import actions from "./actions";
+import getters from "./getters";
+import mutations from "./mutations";
 
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== "production";
 
 export default new Vuex.Store({
-    modules: {settings},
+    state: state,
+    getters: getters,
+    actions: actions,
+    mutations: mutations,
     strict: debug,
-    plugins: [],
 });
