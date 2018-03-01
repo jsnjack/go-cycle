@@ -1,28 +1,32 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow} = require("electron");
 
 let win = null;
 
-app.on('ready', function() {
+app.on("ready", function() {
     // Initialize the window to our specified dimensions
-    win = new BrowserWindow({width: 1000, height: 600});
+    win = new BrowserWindow({ width: 1000, height: 600 });
 
     // Specify entry point to default entry point of vue.js
-    win.loadURL('http://localhost:8080');
+    win.loadURL("http://localhost:8080");
 
     // Remove window once app is closed
-    win.on('closed', function() {
+    win.on("closed", function() {
         win = null;
     });
+
+    if (process.env.NODE_ENV !== "production") {
+        require("vue-devtools").install();
+    }
 });
 // create the application window if the window variable is null
-app.on('activate', () => {
+app.on("activate", () => {
     if (win === null) {
         createWindow();
     }
 });
 // quit the app once closed
-app.on('window-all-closed', function() {
-    if (process.platform != 'darwin') {
+app.on("window-all-closed", function() {
+    if (process.platform != "darwin") {
         app.quit();
     }
 });
