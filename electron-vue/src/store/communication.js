@@ -1,5 +1,6 @@
 const wsMessageHandler = function(app, data) {
     let msg = JSON.parse(data);
+    console.log(data);
     switch (msg.type) {
         case "ws.device:discovered":
             app.$store.commit("DEVICE_DISCOVERED", msg.data);
@@ -15,11 +16,11 @@ const wsMessageHandler = function(app, data) {
             break;
         case "ws.device:measurement":
             if (msg.data.recognizedAs === "hr") {
-                app.$store.commit("MEASUREMENT_HR", mag.data);
+                app.$store.commit("MEASUREMENT_HR", msg.data);
             } else if (msg.data.recognizedAs === "csc") {
-                app.$store.commit("MEASUREMENT_CSC", mag.data);
+                app.$store.commit("MEASUREMENT_CSC", msg.data);
             } else {
-                console.warn("Unrecognized measurement", mag);
+                console.warn("Unrecognized measurement", msg);
             }
             break;
         default:

@@ -53,6 +53,10 @@ export default {
 };
 </script>
 <style>
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('./assets/OpenSans.woff2') format('woff2');
+    }
     html,
     body {
         margin: 0;
@@ -60,5 +64,6 @@ export default {
         background:#489671;
         color: white;
         font-size: 16px;
+        font-family: "Open Sans", monospace;
     }
 </style>

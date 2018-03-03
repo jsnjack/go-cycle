@@ -52,6 +52,10 @@
 <style scoped>
     @import url("../assets/style.css");
 
+    #devices {
+        margin-top: 3rem;
+    }
+
     .container {
         display: inline-block;
         width: 100%;

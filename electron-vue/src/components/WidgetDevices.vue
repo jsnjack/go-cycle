@@ -68,7 +68,7 @@ export default {
 <style scoped>
     #widget-devices {
         position: fixed;
-        top: 1.75rem;
+        top: 29px;
         left: 0;
     }
     table {
@@ -77,8 +77,8 @@ export default {
         padding: 1rem;
     }
     .icon {
-        height: 3rem;
-        width: 3rem;
+        height: 2rem;
+        width: 2rem;
         margin: 0.25rem 1rem 0.25rem 0.25rem;
         fill: white;
     }
