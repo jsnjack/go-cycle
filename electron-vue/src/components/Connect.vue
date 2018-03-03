@@ -11,6 +11,9 @@
                     :device="item">
                 </Device>
             </div>
+            <div class="controls-container">
+                <button class="button-control" @click="onNext">Next</button>
+            </div>
         </div>
     </div>
 </template>
@@ -33,6 +36,11 @@
                 "devices",
             ]),
         },
+        methods: {
+            onNext() {
+                this.$router.push("prerace");
+            },
+        },
         data() {
             return{
                 status: "Scanning..."
@@ -42,9 +50,8 @@
 </script>
 
 <style scoped>
-    h1 {
-        text-align: center;
-    }
+    @import url("../assets/style.css");
+
     .container {
         display: inline-block;
         width: 100%;

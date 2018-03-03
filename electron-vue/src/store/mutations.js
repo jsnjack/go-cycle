@@ -67,6 +67,17 @@ const mutations = {
                 break;
         }
     },
+    MEASUREMENT_HR(state, data) {
+        state.race.currentBPM = data.bpm;
+    },
+    MEASUREMENT_CSC(state, data) {
+        state.race.currentRevolutions = data.revolutions;
+        state.race.totalRevolutions += data.revolutions;
+        state.race.currentRevPerSec = data.rev_per_sec;
+    },
+    VIDEOFILE_URL(state, urlObj) {
+        state.race.videoFile = urlObj;
+    },
 };
 
 export default mutations;

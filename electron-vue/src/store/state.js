@@ -16,6 +16,15 @@ const state = {
             connected: false,
         },
     },
+    race: {
+        videoFile: null,
+        wheelSize: 622 + 28*2,
+        currentBPM: 0,
+        currentRevPerSec: 0,
+        currentRevolutions: 0,
+        totalRevolutions: 0,
+        bodyWeight: 65, // kg
+    },
 };
 
 export default state;

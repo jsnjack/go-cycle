@@ -53,12 +53,12 @@ export default {
 };
 </script>
 <style>
-html,
-body {
-    margin: 0;
-    padding: 0;
-    background:#489671;
-    color: white;
-    font-size: 16px;
-}
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        background:#489671;
+        color: white;
+        font-size: 16px;
+    }
 </style>

@@ -12,7 +12,9 @@ var HRServiceUUID = gatt.UUID16(0x180d)
 
 // HRMessage is a message from the HR sensor
 type HRMessage struct {
-	BPM uint16 `json:"bpm"`
+	ID           string `json:"id"` // Device id
+	RecognizedAs string `json:"recognizedAs"`
+	BPM          uint16 `json:"bpm"`
 }
 
 // HRSensor ...
@@ -66,8 +68,13 @@ func (sensor *HRSensor) Listen() {
 func (sensor *HRSensor) decode(data []byte) {
 	heartRate := binary.LittleEndian.Uint16(append([]byte(data[1:2]), []byte{0}...))
 	Logger.Printf("BPM: %d\n", heartRate)
-	msg := HRMessage{BPM: heartRate}
-	msgB, err := json.Marshal(msg)
+	msgHR := HRMessage{
+		ID:           sensor.Peripheral.ID(),
+		RecognizedAs: GetActiveDeviceType(sensor.Peripheral.ID()),
+		BPM:          heartRate,
+	}
+	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgHR}
+	msgB, err := json.Marshal(msgWS)
 	if err != nil {
 		Logger.Println(err)
 	} else {

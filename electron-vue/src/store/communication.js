@@ -5,13 +5,21 @@ const wsMessageHandler = function(app, data) {
             app.$store.commit("DEVICE_DISCOVERED", msg.data);
             break;
         case "ws.device:status":
-        console.log(msg.data);
             if (msg.data.status === "connected") {
                 app.$store.commit("DEVICE_CONNECTED", msg.data);
             } else if (msg.data.status === "disconnected") {
                 app.$store.commit("DEVICE_DISCONNECTED", msg.data);
             } else {
                 console.warn("Unexpected device status", msg);
+            }
+            break;
+        case "ws.device:measurement":
+            if (msg.data.recognizedAs === "hr") {
+                app.$store.commit("MEASUREMENT_HR", mag.data);
+            } else if (msg.data.recognizedAs === "csc") {
+                app.$store.commit("MEASUREMENT_CSC", mag.data);
+            } else {
+                console.warn("Unrecognized measurement", mag);
             }
             break;
         default:

@@ -12,8 +12,10 @@ var SpeedServiceUUID = gatt.UUID16(0x1816)
 
 // CSCMessage is a message from the CSC sensor
 type CSCMessage struct {
-	Revolutions uint32  `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
-	RevPerSec   float64 `json:"rev_per_sec"` // Revolutions per second, for calculating speed
+	ID           string  `json:"id"` // Device id
+	RecognizedAs string  `json:"recognizedAs"`
+	Revolutions  uint32  `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
+	RevPerSec    float64 `json:"rev_per_sec"` // Revolutions per second, for calculating speed
 }
 
 // SpeedSensorData is data from the sensor
@@ -88,11 +90,14 @@ func (sensor *CSCSensor) decode(data []byte) {
 		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
 	}
 	rps := float64(sensor.Current.Revolutions-sensor.Previous.Revolutions) / (float64(time) * 1024)
-	msg := CSCMessage{
-		Revolutions: sensor.Current.Revolutions - sensor.Previous.Revolutions,
-		RevPerSec:   rps,
+	msgCSC := CSCMessage{
+		ID:           sensor.Peripheral.ID(),
+		RecognizedAs: GetActiveDeviceType(sensor.Peripheral.ID()),
+		Revolutions:  sensor.Current.Revolutions - sensor.Previous.Revolutions,
+		RevPerSec:    rps,
 	}
-	msgB, err := json.Marshal(msg)
+	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
+	msgB, err := json.Marshal(msgWS)
 	if err != nil {
 		Logger.Println(err)
 	} else {

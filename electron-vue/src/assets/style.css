@@ -1,0 +1,27 @@
+/* $main-background-colour: #489671;
+$main-font-colour: white; */
+
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+
+h1 {
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.controls-container {
+    text-align: right;
+}
+
+.button-control {
+    cursor: pointer;
+    color: brown;
+    font-size: 1.5rem;
+    background: #489671;
+    color: white;
+    border: 0.1rem solid white;
+    margin: 1rem;
+    padding: 0.5rem 2rem;
+}

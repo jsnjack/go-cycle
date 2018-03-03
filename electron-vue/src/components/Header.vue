@@ -37,7 +37,13 @@ export default {
 
 <style scoped>
 #header {
+    z-index: 100;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     text-align: right;
+    background: linear-gradient(rgba(0, 0, 0, 0.2));
 }
 .icon {
     height: 1.2rem;
