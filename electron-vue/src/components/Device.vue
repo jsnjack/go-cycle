@@ -52,7 +52,7 @@ export default {
     background: linear-gradient(rgba(0, 0, 0, 0.1));
 }
 .device.connecting {
-    filter: blur(1px);
+    filter: blur(2px);
 
 }
 .thumbnail {

@@ -10,7 +10,7 @@ const mutations = {
         state.ws.connected = true;
     },
     WS_DISCONNECTED(state) {
-        state.ws.connected = true;
+        state.ws.connected = false;
     },
     DEVICE_DISCOVERED(state, device) {
         for (let i = 0; i<state.devices.availableDevices.length; i++) {

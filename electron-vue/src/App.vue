@@ -15,36 +15,41 @@ export default {
     name: "App",
     components: {Header},
     mounted() {
-        let ws = new WebSocket(this.$store.state.ws.url);
-        ws.sendMessage = function(obj) {
-            ws.send(JSON.stringify(obj));
-        };
-        // Listen for messages
-        ws.addEventListener('message', event => {
-            wsMessageHandler(this, event.data);
-        });
-
-        ws.addEventListener('close', event => {
-            this.$store.commit("WS_DISCONNECTED");
-            setTimeout(this.connect, this.$store.state.ws.reconnectTimeout);
-        });
-
-        ws.addEventListener('error', event => {
-            console.warn('WS connection error', event);
-        });
-
-        ws.addEventListener('open', event => {
-            this.$store.commit("WS_CONNECTED", ws);
-            if (this.$store.state.devices.availableDevices.length === 0) {
-                // we need to connect new devices
-                this.$router.push("connect");
-            }
-        });
+        this.connect();
     },
     computed: {
         ...vuex.mapState([
         ]),
     },
+    methods: {
+        connect: function () {
+            let ws = new WebSocket(this.$store.state.ws.url);
+            ws.sendMessage = function(obj) {
+                ws.send(JSON.stringify(obj));
+            };
+            // Listen for messages
+            ws.addEventListener('message', event => {
+                wsMessageHandler(this, event.data);
+            });
+
+            ws.addEventListener('close', event => {
+                this.$store.commit("WS_DISCONNECTED");
+                setTimeout(this.connect, this.$store.state.ws.reconnectTimeout);
+            });
+
+            ws.addEventListener('error', event => {
+                console.warn('WS connection error', event);
+            });
+
+            ws.addEventListener('open', event => {
+                this.$store.commit("WS_CONNECTED", ws);
+                if (this.$store.state.devices.availableDevices.length === 0) {
+                    // we need to connect new devices
+                    this.$router.push("connect");
+                }
+            });
+        },
+    }
 };
 </script>
 <style>

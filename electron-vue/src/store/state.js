@@ -1,6 +1,6 @@
 const state = {
     ws: {
-        obj: null,
+        obj: {sendMessage: function() {}},
         url: "ws://localhost:8000/ws",
         connected: false,
         reconnectTimeout: 1000, // ms
