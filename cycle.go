@@ -9,9 +9,6 @@ import (
 	"github.com/paypal/gatt/examples/option"
 )
 
-// Connected contains information about connected devices
-var Connected ConnectedDevices
-
 // IgnoredDevices is a list of not interesting devices
 var IgnoredDevices []string
 

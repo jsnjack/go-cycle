@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -11,6 +12,12 @@ var clients []*websocket.Conn
 
 // BroadcastChannel contains messages to send to all connected clients
 var BroadcastChannel = make(chan []byte)
+
+// IncomingMessage ...
+type IncomingMessage struct {
+	Type string          `json:"type"`
+	Data json.RawMessage `json:"data"`
+}
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -44,6 +51,33 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 	// Register our new client
 	clients = append(clients, ws)
 
+	for {
+		var msg IncomingMessage
+		err := ws.ReadJSON(&msg)
+		if err != nil {
+			Logger.Println(err)
+		} else {
+			switch msg.Type {
+			case "app.bt:scan":
+				for _, p := range DiscoveredDevices {
+					data := DeviceDiscoveredData{Name: p.Name(), ID: p.ID()}
+					msg := WSMessage{Type: "ws.device:discovered", Data: data}
+					msgByte, _ := json.Marshal(&msg)
+					BroadcastChannel <- msgByte
+				}
+			case "app.device:connect":
+				var data ConnectToDeviceData
+				err = json.Unmarshal(msg.Data, &data)
+				if err != nil {
+					Logger.Println(err)
+				} else {
+					ConnectToDevice(data.ID)
+				}
+			default:
+				Logger.Println("Unhandled message", msg)
+			}
+		}
+	}
 }
 
 func removeConnection(conn *websocket.Conn) {

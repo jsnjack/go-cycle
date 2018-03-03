@@ -6,7 +6,7 @@ const state = {
         reconnectTimeout: 1000, // ms
     },
     devices: {
-        availableDevices: [],
+        availableDevices: [], // [{name: "MOOV", id: "45:fg:56", connecting: false}]
         hr: {
             connected: false,
         },

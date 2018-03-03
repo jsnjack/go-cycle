@@ -9,15 +9,19 @@
 import vuex from "vuex";
 import Header from "./components/Header";
 import Vue from "vue";
+import wsMessageHandler from "./store/communication";
 
 export default {
     name: "App",
     components: {Header},
     mounted() {
         let ws = new WebSocket(this.$store.state.ws.url);
+        ws.sendMessage = function(obj) {
+            ws.send(JSON.stringify(obj));
+        };
         // Listen for messages
         ws.addEventListener('message', event => {
-            console.log(JSON.parse(event.data));
+            wsMessageHandler(this, event.data);
         });
 
         ws.addEventListener('close', event => {
@@ -48,7 +52,7 @@ html,
 body {
     margin: 0;
     padding: 0;
-    background: rgb(72, 150, 113);
+    background:#489671;
     color: white;
     font-size: 16px;
 }
