@@ -175,7 +175,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 		return
 	}
 
-	msgStatus := DeviceStatusData{ID: p.ID(), Status: "connected", As: GetActiveDeviceType(p.ID())}
+	msgStatus := DeviceStatusData{ID: p.ID(), Status: "connected", RecognizedAs: GetActiveDeviceType(p.ID())}
 	wsMsgStatus := WSMessage{Type: "ws.device:status", Data: msgStatus}
 	msgB, err := json.Marshal(&wsMsgStatus)
 	if err != nil {
@@ -188,7 +188,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 func onPeriphDisconnected(p gatt.Peripheral, err error) {
 	fmt.Printf("Disconnected %s\n", p.Name())
 
-	msgStatus := DeviceStatusData{ID: p.ID(), Status: "disconnected", As: GetActiveDeviceType(p.ID())}
+	msgStatus := DeviceStatusData{ID: p.ID(), Status: "disconnected", RecognizedAs: GetActiveDeviceType(p.ID())}
 	wsMsgStatus := WSMessage{Type: "ws.device:status", Data: msgStatus}
 	msgB, err := json.Marshal(&wsMsgStatus)
 	if err != nil {

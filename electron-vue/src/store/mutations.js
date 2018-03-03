@@ -31,20 +31,40 @@ const mutations = {
         }
         console.warn(`Device ${id} not found in availableDevices`);
     },
-    DEVICE_CONNECTED(state, id, as) {
+    DEVICE_CONNECTED(state, data) {
         for (let i = 0; i<state.devices.availableDevices.length; i++) {
-            if (state.devices.availableDevices[i].id === id) {
+            if (state.devices.availableDevices[i].id === data.id) {
                 state.devices.availableDevices[i].connecting = false;
-                return;
+                break;
             }
         }
+        switch (data.recognizedAs) {
+            case "hr":
+                state.devices.hr.id = data.id;
+                state.devices.hr.connected = true;
+                break;
+            case "csc":
+                state.devices.hr.id = data.id;
+                state.devices.hr.connected = true;
+                break;
+        }
     },
-    DEVICE_DISCONNECTED(state, id, as) {
+    DEVICE_DISCONNECTED(state, data) {
         for (let i = 0; i<state.devices.availableDevices.length; i++) {
-            if (state.devices.availableDevices[i].id === id) {
+            if (state.devices.availableDevices[i].id === data.id) {
                 state.devices.availableDevices[i].connecting = false;
-                return;
+                break;
             }
+        }
+        switch (data.recognizedAs) {
+            case "hr":
+                state.devices.hr.id = data.id;
+                state.devices.hr.connected = false;
+                break;
+            case "csc":
+                state.devices.hr.id = data.id;
+                state.devices.hr.connected = false;
+                break;
         }
     },
 };

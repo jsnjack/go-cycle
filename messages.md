@@ -24,7 +24,7 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
     type: "ws.device:status",
     data: {
         id: "45:fg:56",
-        as: "hr"  # ["hr", "csc"]
+        recognizedAs: "hr"  # ["hr", "csc"]
         status: "connected"  # ["connected", "disconnected"]
     }
 }

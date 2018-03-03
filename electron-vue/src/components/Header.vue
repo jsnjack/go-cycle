@@ -1,6 +1,8 @@
 <template>
     <div id="header">
         <div>
+            <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
+            <HRConnectedIcon class="icon" :class="{offline: isHRConnected}"/>
             <ConnectedIcon class="icon" :class="{offline: isOffline}"/>
         </div>
     </div>
@@ -8,18 +10,27 @@
 <script>
 import vuex from "vuex";
 import ConnectedIcon from '../assets/connected.svg';
+import HRConnectedIcon from '../assets/hr-connected.svg';
+import CSCConnectedIcon from '../assets/speed-meter.svg';
 
 
 export default {
     name: 'Header',
-    components: {ConnectedIcon},
+    components: {ConnectedIcon, HRConnectedIcon, CSCConnectedIcon},
     computed: {
         ...vuex.mapState([
             "ws",
+            "devices"
         ]),
         isOffline: function () {
             return !this.ws.connected;
         },
+        isHRConnected: function () {
+            return !this.devices.hr.connected;
+        },
+        isCSCConnected: function () {
+            return !this.devices.csc.connected;
+        }
     },
 };
 </script>
