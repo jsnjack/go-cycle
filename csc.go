@@ -116,3 +116,8 @@ func (sensor *CSCSensor) hasPrevious() bool {
 func (sensor *CSCSensor) GetType() PeripheralType {
 	return CSCPeripheral
 }
+
+// GetPeripheral ...
+func (sensor *CSCSensor) GetPeripheral() gatt.Peripheral {
+	return sensor.Peripheral
+}

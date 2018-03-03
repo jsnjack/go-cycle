@@ -86,3 +86,8 @@ func (sensor *HRSensor) decode(data []byte) {
 func (sensor *HRSensor) GetType() PeripheralType {
 	return HRPeripheral
 }
+
+// GetPeripheral ...
+func (sensor *HRSensor) GetPeripheral() gatt.Peripheral {
+	return sensor.Peripheral
+}

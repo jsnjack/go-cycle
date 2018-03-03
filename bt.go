@@ -23,39 +23,14 @@ var CSCPeripheral PeripheralType = 2
 // DiscoveredDevices is a list of discovered Peripheral
 var DiscoveredDevices []gatt.Peripheral
 
-// ISensors an interface for sensors
-type ISensors interface {
-	Listen()
-	GetType() PeripheralType
-}
-
-// RequestedDevices contains information about connected devices
-type RequestedDevices struct {
-	Peripherals []ISensors
-}
-
-// IsHRSelected ...
-func (r *RequestedDevices) IsHRSelected() bool {
-	for _, item := range r.Peripherals {
-		if item.GetType() == HRPeripheral {
-			return true
-		}
-	}
-	return false
-}
-
-// IsCSCSelected ...
-func (r *RequestedDevices) IsCSCSelected() bool {
-	for _, item := range r.Peripherals {
-		if item.GetType() == CSCPeripheral {
-			return true
-		}
-	}
-	return false
-}
-
 // ActiveDevices ...
-var ActiveDevices RequestedDevices
+type ActiveDevices struct {
+	HR  HRSensor
+	CSC CSCSensor
+}
+
+// ConnectedDevices ...
+var ConnectedDevices ActiveDevices
 
 // ConnectToDevice connects to the device with specified ID
 func ConnectToDevice(id string) {
@@ -99,13 +74,10 @@ func GetCharacteristic(p gatt.Peripheral, service *gatt.Service, uuid gatt.UUID)
 
 // GetActiveDeviceType returns type of active device for status message
 func GetActiveDeviceType(id string) string {
-	for _, item := range ActiveDevices.Peripherals {
-		switch item.GetType() {
-		case HRPeripheral:
-			return "hr"
-		case CSCPeripheral:
-			return "csc"
-		}
+	if ConnectedDevices.HR.GetPeripheral().ID() == id {
+		return "hr"
+	} else if ConnectedDevices.CSC.GetPeripheral().ID() == id {
+		return "csc"
 	}
 	return ""
 }
@@ -150,25 +122,22 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	}
 	switch pType {
 	case HRPeripheral:
-		if !ActiveDevices.IsHRSelected() {
+		if !ConnectedDevices.HR.Connected {
 			hrsensor := HRSensor{Peripheral: p}
-			ActiveDevices.Peripherals = append(ActiveDevices.Peripherals, &hrsensor)
+			ConnectedDevices.HR = hrsensor
 			go hrsensor.Listen()
 		} else {
 			p.Device().CancelConnection(p)
-			// TODO: Remove old sensor
 			Logger.Println("HR sensor already connected")
 		}
 	case CSCPeripheral:
-		if !ActiveDevices.IsCSCSelected() {
-			Logger.Printf("Found %s\n", p.Name())
+		if !ConnectedDevices.CSC.Connected {
 			cscsensor := CSCSensor{Peripheral: p}
-			ActiveDevices.Peripherals = append(ActiveDevices.Peripherals, &cscsensor)
+			ConnectedDevices.CSC = cscsensor
 			go cscsensor.Listen()
 		} else {
 			p.Device().CancelConnection(p)
-			// TODO: Remove old sensor
-			Logger.Println("Speed sensor already connected")
+			Logger.Println("CSC sensor already connected")
 		}
 	default:
 		p.Device().CancelConnection(p)
@@ -195,6 +164,10 @@ func onPeriphDisconnected(p gatt.Peripheral, err error) {
 		Logger.Println(err)
 	} else {
 		BroadcastChannel <- msgB
+	}
+	if ConnectedDevices.HR.GetPeripheral().ID() == p.ID() || ConnectedDevices.CSC.GetPeripheral().ID() == p.ID() {
+		Logger.Println("Reconnecting", p.ID())
+		p.Device().Connect(p)
 	}
 }
 
