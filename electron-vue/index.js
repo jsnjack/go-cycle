@@ -7,6 +7,7 @@ app.on("ready", function() {
     win = new BrowserWindow({
         width: 1000,
         height: 600,
+        autoHideMenuBar: true,
     });
 
     // Specify entry point to default entry point of vue.js
