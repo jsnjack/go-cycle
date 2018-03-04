@@ -33,6 +33,14 @@
                     {{ getCalories }} <span class="unit">kCal</span>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <TimeIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ getRaceDuration }}
+                </td>
+            </tr>
         </table>
     </div>
 </template>
@@ -42,13 +50,21 @@ import HRIcon from '../assets/hr-connected.svg';
 import DistanceIcon from '../assets/distance.svg';
 import SpeedIcon from '../assets/speed-meter.svg';
 import CaloriesIcon from '../assets/fire.svg';
+import TimeIcon from '../assets/time.svg';
+
 
 
 export default {
     name: 'WidgetDevices',
 
     components: {
-        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon
+        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon
+    },
+
+    mounted () {
+        setInterval(()=> {
+            this.now = new Date();
+        }, 1000);
     },
 
     computed: {
@@ -74,8 +90,28 @@ export default {
         getCalories: function () {
             return Math.round(this.race.calories);
         },
+        getRaceDuration: function () {
+            return formatTime(this.now.getTime() - this.race.startedAt.getTime());
+        }
+    },
+    data () {
+        return {
+            now: new Date(),
+        };
     }
 };
+
+function formatTime(mseconds) {
+    const seconds = Math.round(mseconds/ 1000);
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [
+        h,
+        m > 9 ? m : (h ? '0' + m : m || '0'),
+        s > 9 ? s : '0' + s,
+    ].filter(a => a).join(':');
+}
 </script>
 
 <style scoped>

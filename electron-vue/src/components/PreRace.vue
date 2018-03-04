@@ -52,14 +52,11 @@
             },
             onStart() {
                 this.$router.push("race");
+                this.$store.commit("START_RACE");
             },
             saveFileReference(event) {
                 let objectURL = window.URL.createObjectURL(event.target.files[0]);
                 this.$store.commit("VIDEOFILE_URL", objectURL);
-            },
-            aa (event) {
-                console.log("xxx", event);
-
             },
         }
     };

@@ -29,6 +29,8 @@ const state = {
         calories: 0, // kCals
         lastHREvent: 0,
 
+        startedAt: null,
+
         currentRevPerSec: 0,
         currentRevolutions: 0,
         totalRevolutions: 0,

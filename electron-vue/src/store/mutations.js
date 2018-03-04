@@ -93,6 +93,15 @@ const mutations = {
     VIDEOFILE_URL(state, urlObj) {
         state.race.videoFile = urlObj;
     },
+    START_RACE(state) {
+        state.race.currentBPM = 0;
+        state.race.calories = 0;
+        state.race.lastHREvent = 0;
+        state.race.startedAt = new Date();
+        state.race.currentRevPerSec = 0;
+        state.race.currentRevolutions = 0;
+        state.race.totalRevolutions = 0;
+    },
 };
 
 export default mutations;
