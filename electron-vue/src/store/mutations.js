@@ -44,8 +44,8 @@ const mutations = {
                 state.devices.hr.connected = true;
                 break;
             case "csc":
-                state.devices.hr.id = data.id;
-                state.devices.hr.connected = true;
+                state.devices.csc.id = data.id;
+                state.devices.csc.connected = true;
                 break;
         }
     },
@@ -62,8 +62,8 @@ const mutations = {
                 state.devices.hr.connected = false;
                 break;
             case "csc":
-                state.devices.hr.id = data.id;
-                state.devices.hr.connected = false;
+                state.devices.csc.id = data.id;
+                state.devices.csc.connected = false;
                 break;
         }
     },
@@ -89,7 +89,7 @@ const mutations = {
         state.race.lastHREvent = now;
     },
     MEASUREMENT_CSC(state, data) {
-        if (!state.devices.scs.connected) {
+        if (!state.devices.csc.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
         state.race.currentRevolutions = data.revolutions;
