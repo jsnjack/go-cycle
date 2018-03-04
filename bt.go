@@ -74,9 +74,9 @@ func GetCharacteristic(p gatt.Peripheral, service *gatt.Service, uuid gatt.UUID)
 
 // GetActiveDeviceType returns type of active device for status message
 func GetActiveDeviceType(id string) string {
-	if ConnectedDevices.HR.GetPeripheral().ID() == id {
+	if ConnectedDevices.HR.Connected && ConnectedDevices.HR.GetPeripheral().ID() == id {
 		return "hr"
-	} else if ConnectedDevices.CSC.GetPeripheral().ID() == id {
+	} else if ConnectedDevices.CSC.Connected && ConnectedDevices.CSC.GetPeripheral().ID() == id {
 		return "csc"
 	}
 	return ""
@@ -125,6 +125,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 		if !ConnectedDevices.HR.Connected {
 			hrsensor := HRSensor{Peripheral: p}
 			ConnectedDevices.HR = hrsensor
+			ConnectedDevices.HR.Connected = true
 			go hrsensor.Listen()
 		} else {
 			p.Device().CancelConnection(p)
@@ -134,6 +135,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 		if !ConnectedDevices.CSC.Connected {
 			cscsensor := CSCSensor{Peripheral: p}
 			ConnectedDevices.CSC = cscsensor
+			ConnectedDevices.CSC.Connected = true
 			go cscsensor.Listen()
 		} else {
 			p.Device().CancelConnection(p)
