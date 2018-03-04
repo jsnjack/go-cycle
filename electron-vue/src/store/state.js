@@ -20,7 +20,7 @@ const state = {
         weight: 65, // kg
         gender: "m", // male
         age: 30,
-        wheelSize: 622 + 28*2, // mm
+        wheelSize: "2136", // mm
     },
     race: {
         videoFile: null,
