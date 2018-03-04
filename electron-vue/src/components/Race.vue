@@ -43,5 +43,7 @@ export default {
         bottom: 0;
         min-width: 100%;
         min-height: 100%;
+        background: url("../assets/background.jpg") center;
+        background-size: cover;
     }
 </style>
