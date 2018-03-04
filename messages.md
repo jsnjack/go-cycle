@@ -56,6 +56,14 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
 }
 ```
 
+### Stop scanning
+```json
+{
+    type: "app.bt:scan_stop",
+    data: {}
+}
+```
+
 ### Connect device
 ```json
 {
@@ -65,3 +73,4 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
     }
 }
 ```
+

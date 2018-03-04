@@ -73,6 +73,13 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 				} else {
 					ConnectToDevice(data.ID)
 				}
+			case "app.bt:scan_stop":
+				if len(DiscoveredDevices) > 0 {
+					DiscoveredDevices[0].Device().StopScanning()
+					Logger.Println("Stop scanning")
+				} else {
+					Logger.Println("No discovered devices")
+				}
 			default:
 				Logger.Println("Unhandled message", msg)
 			}

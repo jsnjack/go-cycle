@@ -53,6 +53,7 @@
             onStart() {
                 this.$router.push("race");
                 this.$store.commit("START_RACE");
+                this.$store.dispatch("ws_stopScanning");
             },
             saveFileReference(event) {
                 let objectURL = window.URL.createObjectURL(event.target.files[0]);

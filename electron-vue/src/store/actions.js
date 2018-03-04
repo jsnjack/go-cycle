@@ -6,6 +6,13 @@ const actions = {
         };
         state.ws.obj.sendMessage(data);
     },
+    ws_stopScanning({state}) {
+        let data = {
+            type: "app.bt:scan_stop",
+            data: {},
+        };
+        state.ws.obj.sendMessage(data);
+    },
     ws_connectDevice({state, commit}, id) {
         commit("DEVICE_CONNECTING", id);
         let data = {
