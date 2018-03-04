@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
+	"math"
 
 	"github.com/paypal/gatt"
 )
@@ -90,6 +91,10 @@ func (sensor *CSCSensor) decode(data []byte) {
 		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
 	}
 	rps := float64(sensor.Current.Revolutions-sensor.Previous.Revolutions) / (float64(time) * 1024)
+	if math.IsNaN(rps) || math.IsInf(rps, 0) {
+		rps = 0
+	}
+	Logger.Printf("RPS: %f\n", rps)
 	msgCSC := CSCMessage{
 		ID:           sensor.Peripheral.ID(),
 		RecognizedAs: GetActiveDeviceType(sensor.Peripheral.ID()),
