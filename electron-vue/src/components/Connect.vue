@@ -57,7 +57,8 @@
     }
 
     .container {
-        display: inline-block;
+        display: flex;
+        flex-flow: row wrap;
         width: 100%;
     }
 </style>

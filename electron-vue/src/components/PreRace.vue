@@ -1,33 +1,35 @@
 <template>
-    <div class="container">
+    <div id="prerace">
         <h1>Settings</h1>
-        <section>
-            <h2>Body</h2>
-            <div class="row">
-                <span>Weight, kg</span>
-                <input type="number" :value="user.weight"/>
+        <div class="container">
+            <div class="section">
+                <h2>Body</h2>
+                <div class="row">
+                    <span>Weight, kg</span>
+                    <input type="number" :value="user.weight"/>
+                </div>
+                <div class="row">
+                    <span>Gender</span>
+                    <input type="text" :value="user.gender"/>
+                </div>
+                <div class="row">
+                    <span>Age</span>
+                    <input type="number" :value="user.age"/>
+                </div>
             </div>
-            <div class="row">
-                <span>Gender</span>
-                <input type="text" :value="user.gender"/>
-            </div>
-            <div class="row">
-                <span>Age</span>
-                <input type="number" :value="user.age"/>
-            </div>
-        </section>
 
-        <section>
-            <h2>Bicycle</h2>
-                <span>Wheel Size, mm</span>
-                <input type="number" :value="user.wheelSize"/>
-        </section>
+            <div class="section">
+                <h2>Bicycle</h2>
+                    <span>Wheel Size, mm</span>
+                    <input type="number" :value="user.wheelSize"/>
+            </div>
 
-        <section>
-            <h2>Video</h2>
-                <span>Location</span>
-                <input id="video" type="file" @change="saveFileReference"/>
-        </section>
+            <div class="section">
+                <h2>Video</h2>
+                    <span>Location</span>
+                    <input id="video" type="file" @change="saveFileReference"/>
+            </div>
+        </div>
 
         <div class="controls-container">
             <button class="button-control" @click="onBack">Back</button>
@@ -66,9 +68,18 @@
 <style scoped>
     @import url("../assets/style.css");
 
+    #prerace {
+        margin-top: 3rem;
+    }
+
     .container {
         margin: 1em;
         font-size: 1.5rem;
+        display: flex;
+    }
+
+    .section {
+        flex: auto;
     }
 
     input {
