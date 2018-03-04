@@ -33,8 +33,6 @@ func BroadcastMessages() {
 			err := client.WriteMessage(websocket.TextMessage, msg)
 			if err != nil {
 				Logger.Printf("error: %v\n", err)
-				client.Close()
-				removeConnection(client)
 			}
 		}
 	}
@@ -51,38 +49,44 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 	// Register our new client
 	clients = append(clients, ws)
 
+	defer func() {
+		ws.Close()
+		removeConnection(ws)
+	}()
+
 	for {
 		var msg IncomingMessage
 		err := ws.ReadJSON(&msg)
 		if err != nil {
 			Logger.Println(err)
-		} else {
-			switch msg.Type {
-			case "app.bt:scan":
-				for _, p := range DiscoveredDevices {
-					data := DeviceDiscoveredData{Name: p.Name(), ID: p.ID()}
-					msg := WSMessage{Type: "ws.device:discovered", Data: data}
-					msgByte, _ := json.Marshal(&msg)
-					BroadcastChannel <- msgByte
-				}
-			case "app.device:connect":
-				var data ConnectToDeviceData
-				err = json.Unmarshal(msg.Data, &data)
-				if err != nil {
-					Logger.Println(err)
-				} else {
-					ConnectToDevice(data.ID)
-				}
-			case "app.bt:scan_stop":
-				if len(DiscoveredDevices) > 0 {
-					DiscoveredDevices[0].Device().StopScanning()
-					Logger.Println("Stop scanning")
-				} else {
-					Logger.Println("No discovered devices")
-				}
-			default:
-				Logger.Println("Unhandled message", msg)
+			removeConnection(ws)
+			return
+		}
+		switch msg.Type {
+		case "app.bt:scan":
+			for _, p := range DiscoveredDevices {
+				data := DeviceDiscoveredData{Name: p.Name(), ID: p.ID()}
+				msg := WSMessage{Type: "ws.device:discovered", Data: data}
+				msgByte, _ := json.Marshal(&msg)
+				BroadcastChannel <- msgByte
 			}
+		case "app.device:connect":
+			var data ConnectToDeviceData
+			err = json.Unmarshal(msg.Data, &data)
+			if err != nil {
+				Logger.Println(err)
+			} else {
+				ConnectToDevice(data.ID)
+			}
+		case "app.bt:scan_stop":
+			if len(DiscoveredDevices) > 0 {
+				DiscoveredDevices[0].Device().StopScanning()
+				Logger.Println("Stop scanning")
+			} else {
+				Logger.Println("No discovered devices")
+			}
+		default:
+			Logger.Println("Unhandled message", msg)
 		}
 	}
 }
