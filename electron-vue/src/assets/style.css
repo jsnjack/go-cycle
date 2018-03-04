@@ -15,6 +15,10 @@ h1 {
     text-align: right;
 }
 
+input {
+    outline: none;
+}
+
 .button-control {
     cursor: pointer;
     color: brown;
