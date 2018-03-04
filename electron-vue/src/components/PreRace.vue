@@ -5,14 +5,22 @@
             <h2>Body</h2>
             <div class="row">
                 <span>Weight, kg</span>
-                <input type="number" :value="race.bodyWeight"/>
+                <input type="number" :value="user.weight"/>
+            </div>
+            <div class="row">
+                <span>Gender</span>
+                <input type="text" :value="user.gender"/>
+            </div>
+            <div class="row">
+                <span>Age</span>
+                <input type="number" :value="user.age"/>
             </div>
         </section>
 
         <section>
             <h2>Bicycle</h2>
                 <span>Wheel Size, mm</span>
-                <input type="number" :value="race.wheelSize"/>
+                <input type="number" :value="user.wheelSize"/>
         </section>
 
         <section>
@@ -35,6 +43,7 @@
         computed: {
                 ...vuex.mapState([
                     "race",
+                    "user",
                 ]),
         },
         methods: {

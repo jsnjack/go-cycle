@@ -25,6 +25,14 @@
                     {{ getDistance }} <span class="unit">{{ getDistanceUnit }}</span>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <CaloriesIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ getCalories }} <span class="unit">kCal</span>
+                </td>
+            </tr>
         </table>
     </div>
 </template>
@@ -33,12 +41,14 @@ import vuex from "vuex";
 import HRIcon from '../assets/hr-connected.svg';
 import DistanceIcon from '../assets/distance.svg';
 import SpeedIcon from '../assets/speed-meter.svg';
+import CaloriesIcon from '../assets/fire.svg';
+
 
 export default {
     name: 'WidgetDevices',
 
     components: {
-        HRIcon, DistanceIcon, SpeedIcon,
+        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon
     },
 
     computed: {
@@ -60,7 +70,10 @@ export default {
                 return "m";
             }
             return "km"
-        }
+        },
+        getCalories: function () {
+            return Math.round(this.race.calories);
+        },
     }
 };
 </script>

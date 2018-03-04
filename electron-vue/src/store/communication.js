@@ -1,6 +1,5 @@
 const wsMessageHandler = function(app, data) {
     let msg = JSON.parse(data);
-    console.log(data);
     switch (msg.type) {
         case "ws.device:discovered":
             app.$store.commit("DEVICE_DISCOVERED", msg.data);

@@ -16,14 +16,22 @@ const state = {
             connected: false,
         },
     },
+    user: {
+        weight: 65, // kg
+        gender: "m", // male
+        age: 30,
+        wheelSize: 622 + 28*2, // mm
+    },
     race: {
         videoFile: null,
-        wheelSize: 622 + 28*2,
+
         currentBPM: 0,
+        calories: 0, // kCals
+        lastHREvent: 0,
+
         currentRevPerSec: 0,
         currentRevolutions: 0,
         totalRevolutions: 0,
-        bodyWeight: 65, // kg
     },
 };
 

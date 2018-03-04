@@ -5,7 +5,7 @@ const getters = {
         return value;
     },
     distancePerRev(state) {
-        return Math.Pi * state.race.wheelSize / 1000 || 0; // meters
+        return Math.Pi * state.user.wheelSize / 1000 || 0; // meters
     },
     distance(state, getters) {
         // Total distance in meters
