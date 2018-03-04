@@ -1,8 +1,8 @@
 <template>
     <div id="header">
         <div>
-            <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
             <HRConnectedIcon class="icon" :class="{offline: isHRConnected}"/>
+            <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
             <ConnectedIcon class="icon" :class="{offline: isOffline}"/>
         </div>
     </div>
