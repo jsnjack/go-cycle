@@ -68,6 +68,9 @@ const mutations = {
         }
     },
     MEASUREMENT_HR(state, data) {
+        if (!state.devices.hr.connected) {
+            this.commit("DEVICE_CONNECTED", data);
+        }
         let energyPerMin;
         let now = new Date().getTime();
         let period = now - state.race.lastHREvent; // ms
@@ -86,6 +89,9 @@ const mutations = {
         state.race.lastHREvent = now;
     },
     MEASUREMENT_CSC(state, data) {
+        if (!state.devices.scs.connected) {
+            this.commit("DEVICE_CONNECTED", data);
+        }
         state.race.currentRevolutions = data.revolutions;
         state.race.totalRevolutions += data.revolutions;
         state.race.currentRevPerSec = data.rev_per_sec;
