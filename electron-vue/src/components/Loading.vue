@@ -1,6 +1,6 @@
 <template>
     <div id="loading">
-        Loading...
+        Connecting...
     </div>
 </template>
 <script>
