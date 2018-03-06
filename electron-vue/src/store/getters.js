@@ -13,6 +13,13 @@ const getters = {
         value = Math.round(value);
         return value;
     },
+    routeDistance(state) {
+        let total = 0;
+        if (state.race.gpxDistToElev.length) {
+            return state.race.gpxDistToElev[state.race.gpxDistToElev.length - 1].distance;
+        }
+        return total;
+    },
 };
 
 export default getters;

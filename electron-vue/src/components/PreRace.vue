@@ -37,8 +37,16 @@
 
             <div class="section">
                 <h2>Route</h2>
-                    <div>Video</div>
-                    <input id="video" type="file" @change="saveFileReference"/>
+                    <div class="row">
+                        <div>Video</div>
+                        <input id="video" type="file" @change="saveFileReference"/>
+                    </div>
+
+                    <div class="row">
+                        <div>GPX track</div>
+                        <input id="gpx_track" type="file" @change="gpxTrack"/>
+                        {{ routeDistance }}
+                    </div>
             </div>
         </div>
 
@@ -50,6 +58,7 @@
 </template>
 <script>
     import vuex from "vuex";
+    import utils from "../utils/gpx";
 
     export default {
         name: 'PreRace',
@@ -57,6 +66,9 @@
                 ...vuex.mapState([
                     "race",
                     "user",
+                ]),
+                ...vuex.mapGetters([
+                    "routeDistance",
                 ]),
         },
         methods: {
@@ -71,6 +83,12 @@
             saveFileReference(event) {
                 let objectURL = window.URL.createObjectURL(event.target.files[0]);
                 this.$store.commit("VIDEOFILE_URL", objectURL);
+            },
+            gpxTrack(event) {
+                let objectURL = window.URL.createObjectURL(event.target.files[0]);
+                utils.readBlob(event.target.files[0]).then(doc => {
+                    this.$store.commit("SET_GPX_DOC", doc);
+                });
             },
             updateWeight(event) {
                 this.$store.commit("UPDATE_USER_WEIGHT", event.target.value);

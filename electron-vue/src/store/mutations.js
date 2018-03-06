@@ -4,6 +4,9 @@ let defaultAvailableDevice = {
     connecting: null,
 };
 
+import utils from "../utils/gpx";
+
+
 const mutations = {
     WS_CONNECTED(state, connection) {
         state.ws.obj = connection;
@@ -98,6 +101,26 @@ const mutations = {
     },
     VIDEOFILE_URL(state, urlObj) {
         state.race.videoFile = urlObj;
+    },
+    SET_GPX_DOC(state, doc) {
+        let started = performance.now();
+        state.race.gpxDoc = doc;
+        let total = 0;
+        let points = doc.getElementsByTagName("trkpt");
+        let container = new Array(points.length);
+        container[0] = {distance: 0, elevation: points[0].getElementsByTagName("ele")[0].textContent};
+        for (let i=0; i<points.length - 1; i++) {
+            total += utils.getDistance(
+                points[i].getAttribute("lat"),
+                points[i].getAttribute("lon"),
+                points[i+1].getAttribute("lat"),
+                points[i+1].getAttribute("lon")
+            );
+            container[i+1] = {distance: total, elevation: points[i+1].getElementsByTagName("ele")[0].textContent};
+        }
+        state.race.gpxDistToElev = container;
+        let finished = performance.now();
+        console.debug("gpxDistToElev construction took, ms:", finished - started);
     },
     START_RACE(state) {
         state.race.currentBPM = 0;

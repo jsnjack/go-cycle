@@ -23,6 +23,9 @@ const state = {
         wheelSize: "2136", // mm
     },
     race: {
+        gpxDoc: null,
+        gpxDistToElev: [],
+
         videoFile: null,
 
         currentBPM: 0,
