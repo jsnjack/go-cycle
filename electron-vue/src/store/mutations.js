@@ -98,6 +98,9 @@ const mutations = {
         state.race.currentRevolutions = data.revolutions;
         state.race.totalRevolutions += data.revolutions;
         state.race.currentRevPerSec = data.rev_per_sec;
+        if (data.rev_per_sec > state.race.maxRevPerSec) {
+            state.race.maxRevPerSec = data.rev_per_sec;
+        }
     },
     VIDEOFILE_URL(state, urlObj) {
         state.race.videoFile = urlObj;
@@ -127,9 +130,14 @@ const mutations = {
         state.race.calories = 0;
         state.race.lastHREvent = 0;
         state.race.startedAt = new Date();
+        state.race.finishedAt = null;
         state.race.currentRevPerSec = 0;
         state.race.currentRevolutions = 0;
         state.race.totalRevolutions = 0;
+        state.race.maxRevPerSec = 0;
+    },
+    FINISH_RACE(state) {
+        state.race.finishedAt = new Date();
     },
     UPDATE_USER_WEIGHT(state, value) {
         state.user.weight = parseInt(value, 10);

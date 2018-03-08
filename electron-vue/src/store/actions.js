@@ -23,6 +23,9 @@ const actions = {
         };
         state.ws.obj.sendMessage(data);
     },
+    finish_race({state, commit}) {
+        commit("FINISH_RACE");
+    },
 };
 
 export default actions;

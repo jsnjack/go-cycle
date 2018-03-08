@@ -4,6 +4,11 @@ const getters = {
         value = value.toFixed(1);
         return value;
     },
+    maxSpeed(state, getters) {
+        let value = Math.round(state.race.maxRevPerSec * getters.distance * 3.6 * 1000 * 10) / 10 || 0;
+        value = value.toFixed(1);
+        return value;
+    },
     distancePerRev(state) {
         return parseInt(state.user.wheelSize, 10) / 1000 || 0; // meters
     },

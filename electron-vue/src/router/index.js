@@ -4,6 +4,7 @@ import Connect from "@/components/Connect";
 import Loading from "@/components/Loading";
 import PreRace from "@/components/PreRace";
 import Race from "@/components/Race";
+import AfterRace from "@/components/AfterRace";
 
 
 Vue.use(Router);
@@ -29,6 +30,11 @@ export default new Router({
             path: "/race",
             name: "race",
             component: Race,
+        },
+        {
+            path: "/afterrace",
+            name: "afterrace",
+            component: AfterRace,
         },
     ],
 });

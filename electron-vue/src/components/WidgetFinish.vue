@@ -8,7 +8,7 @@
 import vuex from "vuex";
 
 export default {
-    name: 'WidgetProgress',
+    name: 'WidgetFinish',
     computed: {
         ...vuex.mapGetters([
             "distanceLeft",

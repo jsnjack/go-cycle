@@ -1,6 +1,7 @@
 <template>
     <div id="header">
         <div>
+            <span @click="finishRace"><FinishIcon v-show="race.startedAt" class="icon finish"/></span>
             <HRConnectedIcon class="icon" :class="{offline: isHRConnected}"/>
             <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
             <ConnectedIcon class="icon" :class="{offline: isOffline}"/>
@@ -12,15 +13,17 @@ import vuex from "vuex";
 import ConnectedIcon from '../assets/connected.svg';
 import HRConnectedIcon from '../assets/hr-connected.svg';
 import CSCConnectedIcon from '../assets/speed-meter.svg';
+import FinishIcon from '../assets/finish.svg';
 
 
 export default {
     name: 'Header',
-    components: {ConnectedIcon, HRConnectedIcon, CSCConnectedIcon},
+    components: {ConnectedIcon, HRConnectedIcon, CSCConnectedIcon, FinishIcon},
     computed: {
         ...vuex.mapState([
             "ws",
-            "devices"
+            "devices",
+            "race"
         ]),
         isOffline: function () {
             return !this.ws.connected;
@@ -32,6 +35,12 @@ export default {
             return !this.devices.csc.connected;
         }
     },
+    methods: {
+        finishRace() {
+            this.$store.dispatch("finish_race");
+            this.$router.push("afterrace");
+        }
+    }
 };
 </script>
 
@@ -53,5 +62,12 @@ export default {
 }
 .icon.offline {
     fill: rgb(77, 77, 77);
+}
+.finish {
+    margin-right: 1rem;
+    fill: #fde74c;
+}
+.finish:hover {
+    cursor: pointer;
 }
 </style>

@@ -34,10 +34,13 @@ const state = {
         lastHREvent: 0,
 
         startedAt: null,
+        finishedAt: null,
 
         currentRevPerSec: 0,
+        maxRevPerSec: 0,
         currentRevolutions: 0,
         totalRevolutions: 0,
+
     },
 };
 
