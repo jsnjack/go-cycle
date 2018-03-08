@@ -10,6 +10,7 @@
                 </video>
                 <WidgetDevices/>
                 <WidgetProgress/>
+                <WidgetFinish/>
             </div>
         </div>
     </div>
@@ -18,13 +19,13 @@
 import vuex from "vuex";
 import WidgetDevices from './WidgetDevices';
 import WidgetProgress from './WidgetProgress';
-
+import WidgetFinish from './WidgetFinish';
 
 export default {
     name: 'Race',
 
     components: {
-        WidgetDevices, WidgetProgress
+        WidgetDevices, WidgetProgress, WidgetFinish
     },
 
     computed: {
