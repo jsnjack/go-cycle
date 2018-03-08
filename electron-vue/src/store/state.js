@@ -25,6 +25,7 @@ const state = {
     race: {
         gpxDoc: null,
         gpxDistToElev: [],
+        simpleRouteDistance: 0, // m, route distance provided manually
 
         videoFile: null,
 

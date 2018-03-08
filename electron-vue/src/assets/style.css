@@ -29,3 +29,10 @@ input {
     margin: 1rem;
     padding: 0.5rem 2rem;
 }
+
+.info {
+    margin: 1em;
+    font-size: 1.5rem;
+    padding-left: 1rem;
+    border-left: #fde74c solid 0.2rem;
+}

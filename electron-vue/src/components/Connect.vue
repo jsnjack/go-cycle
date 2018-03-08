@@ -11,6 +11,10 @@
                     :device="item">
                 </Device>
             </div>
+            <div class="info">
+                <p>Select sensors you want to use during the activity</p>
+                <p>Heart Rate monitor and Cycling Speed and Cadence (in speed mode) sensors are supported</p>
+            </div>
             <div class="controls-container">
                 <button class="button-control" @click="onNext">Next</button>
             </div>

@@ -143,6 +143,9 @@ const mutations = {
     UPDATE_USER_WHEEL_SIZE(state, value) {
         state.user.wheelSize = value;
     },
+    UPDATE_SIMPLE_ROUTE_DISTANCE(state, value) {
+        state.race.simpleRouteDistance = parseInt(value, 10);
+    },
 };
 
 export default mutations;

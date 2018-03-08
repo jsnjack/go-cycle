@@ -18,15 +18,17 @@ const getters = {
         let total = 0;
         if (state.race.gpxDistToElev.length) {
             return state.race.gpxDistToElev[state.race.gpxDistToElev.length - 1].distance;
+        } else {
+            total = state.race.simpleRouteDistance;
         }
         return total;
     },
-    distanceLeft(state) {
+    distanceLeft(state, getters) {
         // Distance left in meters
-        return state.routeDistance - state.distance || 0;
+        return getters.routeDistance - getters.distance || 0;
     },
-    routeProgress(state) {
-        return Math.round(state.distance/state.routeDistance * 10) / 10 || 0;
+    routeProgress(state, getters) {
+        return Math.round(getters.distance/getters.routeDistance * 10) / 10 || 0;
     },
 };
 

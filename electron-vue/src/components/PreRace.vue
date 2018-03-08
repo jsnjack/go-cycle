@@ -5,22 +5,22 @@
             <div class="section">
                 <h2>Personal info</h2>
                 <div class="row">
-                    <div>Weight, kg</div>
+                    <div class="info">Weight, kg</div>
                     <input type="number" :value="user.weight" @input="updateWeight"/>
                 </div>
                 <div class="row">
-                    <div>Gender</div>
+                    <div class="info">Gender</div>
                     <select v-model="user.gender" @input="updateGender">
                         <option value="f">Female</option>
                         <option value="m">Male</option>
                     </select>
                 </div>
                 <div class="row">
-                    <div>Age</div>
+                    <div class="info">Age</div>
                     <input type="number" :value="user.age" @input="updateAge"/>
                 </div>
                 <div class="row">
-                    <div>Tyre Size</div>
+                    <div class="info">Tyre Size</div>
                     <!-- https://www.cateye.com/data/resources/Tire_size_chart_ENG.pdf -->
                     <select v-model="user.wheelSize" @input="updateWheelSize">
                         <option value="2070">700x18C</option>
@@ -38,14 +38,18 @@
             <div class="section">
                 <h2>Route</h2>
                     <div class="row">
-                        <div>Video</div>
+                        <div class="info">Select the video file to play during the activity</div>
                         <input id="video" type="file" @change="saveFileReference"/>
                     </div>
 
                     <div class="row">
-                        <div>GPX track</div>
-                        <input id="gpx_track" type="file" @change="gpxTrack"/>
-                        {{ routeDistance }}
+                        <div class="info">Import route from GPX file</div>
+                        <input id="gpx_track" type="file" accept=".gpx" @change="gpxTrack"/>
+                    </div>
+
+                    <div class="row">
+                        <div class="info">Or provide the distance manually, m</div>
+                        <input id="simple-route-distance" type="number" @change="updateSimpleRouteDistance"/>
                     </div>
             </div>
         </div>
@@ -89,6 +93,9 @@
                 utils.readBlob(event.target.files[0]).then(doc => {
                     this.$store.commit("SET_GPX_DOC", doc);
                 });
+            },
+            updateSimpleRouteDistance(event) {
+                this.$store.commit("UPDATE_SIMPLE_ROUTE_DISTANCE", event.target.value);
             },
             updateWeight(event) {
                 this.$store.commit("UPDATE_USER_WEIGHT", event.target.value);
