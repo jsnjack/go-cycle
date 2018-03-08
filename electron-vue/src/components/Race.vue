@@ -9,6 +9,7 @@
                     loop="true">
                 </video>
                 <WidgetDevices/>
+                <WidgetProgress/>
             </div>
         </div>
     </div>
@@ -16,13 +17,14 @@
 <script>
 import vuex from "vuex";
 import WidgetDevices from './WidgetDevices';
+import WidgetProgress from './WidgetProgress';
 
 
 export default {
     name: 'Race',
 
     components: {
-        WidgetDevices
+        WidgetDevices, WidgetProgress
     },
 
     computed: {

@@ -14,11 +14,19 @@ const getters = {
         return value;
     },
     routeDistance(state) {
+        // Route distance in meters
         let total = 0;
         if (state.race.gpxDistToElev.length) {
             return state.race.gpxDistToElev[state.race.gpxDistToElev.length - 1].distance;
         }
         return total;
+    },
+    distanceLeft(state) {
+        // Distance left in meters
+        return this.routeDistance - this.distance;
+    },
+    routeProgress(state) {
+        return Math.round(this.distance/this.routeDistance * 10) / 10;
     },
 };
 
