@@ -95,11 +95,20 @@ const mutations = {
         if (!state.devices.csc.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
-        state.race.currentRevolutions = data.revolutions;
-        state.race.totalRevolutions += data.revolutions;
-        state.race.currentRevPerSec = data.rev_per_sec;
-        if (data.rev_per_sec > state.race.maxRevPerSec) {
-            state.race.maxRevPerSec = data.rev_per_sec;
+        if (state.race.startedAt && !state.race.finishedAt) {
+            state.race.currentRevolutions = data.revolutions;
+            state.race.totalRevolutions += data.revolutions;
+            state.race.currentRevPerSec = data.rev_per_sec;
+            if (data.rev_per_sec > state.race.maxRevPerSec) {
+                state.race.maxRevPerSec = data.rev_per_sec;
+            }
+            let point = {
+                time: new Date().toISOString(),
+                rev: state.race.totalRevolutions,
+                hr: state.race.currentBPM,
+            };
+            localStorage.setItem("trkpt_" + state.race.point, JSON.stringify(point));
+            state.race.point++;
         }
     },
     VIDEOFILE_URL(state, urlObj) {
@@ -135,6 +144,7 @@ const mutations = {
         state.race.currentRevolutions = 0;
         state.race.totalRevolutions = 0;
         state.race.maxRevPerSec = 0;
+        localStorage.clear();
     },
     FINISH_RACE(state) {
         state.race.finishedAt = new Date();

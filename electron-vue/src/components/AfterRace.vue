@@ -25,6 +25,7 @@
         </table>
 
         <div class="controls-container">
+            <button class="button-control" @click="onUpload">Upload activity</button>
             <button class="button-control" @click="onNew">New race</button>
         </div>
     </div>
@@ -32,6 +33,7 @@
 <script>
 import vuex from "vuex";
 import {formatTime} from "../utils/time";
+import utils from "../utils/gpx";
 
 export default {
     name: 'AfterRace',
@@ -39,6 +41,7 @@ export default {
         ...vuex.mapGetters([
             "distance",
             "maxSpeed",
+            "distancePerRev"
         ]),
         ...vuex.mapState([
             "race",
@@ -58,6 +61,9 @@ export default {
     methods: {
         onNew: function () {
             this.$router.push("prerace");
+        },
+        onUpload: function () {
+            console.log(utils.createGPX(this.race.point, this.distancePerRev));
         }
     }
 };

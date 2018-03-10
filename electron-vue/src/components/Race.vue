@@ -32,8 +32,20 @@ export default {
         ...vuex.mapState([
             "race"
         ]),
+        ...vuex.mapGetters([
+            "distanceLeft"
+        ]),
         getVideoFile: function () {
             return [this.race.videoFile];
+        }
+    },
+
+    watch: {
+        distanceLeft: function (val) {
+            if (val <= 0) {
+                this.$store.dispatch("finish_race");
+                this.$router.push("afterrace");
+            }
         }
     }
 };

@@ -41,6 +41,8 @@ const state = {
         currentRevolutions: 0,
         totalRevolutions: 0,
 
+        point: 0, // Amount of recieved datapoints from csc sensor
+
     },
 };
 
