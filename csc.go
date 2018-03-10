@@ -27,10 +27,10 @@ type SpeedSensorData struct {
 
 // CSCSensor ...
 type CSCSensor struct {
-	Peripheral gatt.Peripheral
-	Connected  bool
-	Previous   SpeedSensorData
-	Current    SpeedSensorData
+	Peripheral  gatt.Peripheral
+	Initialized bool
+	Previous    SpeedSensorData
+	Current     SpeedSensorData
 }
 
 // Listen ...
@@ -38,7 +38,6 @@ func (sensor *CSCSensor) Listen() {
 	Logger.Println("Setting up CSC sensor")
 	defer func() {
 		sensor.Peripheral.Device().CancelConnection(sensor.Peripheral)
-		sensor.Connected = false
 	}()
 	service, err := GetService(sensor.Peripheral, gatt.UUID16(0x1816))
 	if err != nil {
@@ -57,8 +56,6 @@ func (sensor *CSCSensor) Listen() {
 		Logger.Println(err)
 		return
 	}
-
-	sensor.Connected = true
 
 	resultCh := make(chan string)
 	sensor.Peripheral.SetNotifyValue(ch, func(ch *gatt.Characteristic, data []byte, err error) {

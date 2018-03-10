@@ -19,8 +19,8 @@ type HRMessage struct {
 
 // HRSensor ...
 type HRSensor struct {
-	Peripheral gatt.Peripheral
-	Connected  bool
+	Peripheral  gatt.Peripheral
+	Initialized bool
 }
 
 // Listen ...
@@ -28,7 +28,6 @@ func (sensor *HRSensor) Listen() {
 	Logger.Println("Setting up HR sensor")
 	defer func() {
 		sensor.Peripheral.Device().CancelConnection(sensor.Peripheral)
-		sensor.Connected = false
 	}()
 
 	if err := sensor.Peripheral.SetMTU(500); err != nil {
@@ -52,8 +51,6 @@ func (sensor *HRSensor) Listen() {
 		Logger.Println(err)
 		return
 	}
-
-	sensor.Connected = true
 
 	resultCh := make(chan string)
 	sensor.Peripheral.SetNotifyValue(ch, func(ch *gatt.Characteristic, data []byte, err error) {

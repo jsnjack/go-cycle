@@ -74,9 +74,9 @@ func GetCharacteristic(p gatt.Peripheral, service *gatt.Service, uuid gatt.UUID)
 
 // GetActiveDeviceType returns type of active device for status message
 func GetActiveDeviceType(id string) string {
-	if ConnectedDevices.HR.Connected && ConnectedDevices.HR.GetPeripheral().ID() == id {
+	if ConnectedDevices.HR.Initialized && ConnectedDevices.HR.GetPeripheral().ID() == id {
 		return "hr"
-	} else if ConnectedDevices.CSC.Connected && ConnectedDevices.CSC.GetPeripheral().ID() == id {
+	} else if ConnectedDevices.CSC.Initialized && ConnectedDevices.CSC.GetPeripheral().ID() == id {
 		return "csc"
 	}
 	return ""
@@ -122,25 +122,13 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	}
 	switch pType {
 	case HRPeripheral:
-		if !ConnectedDevices.HR.Connected {
-			hrsensor := HRSensor{Peripheral: p}
-			ConnectedDevices.HR = hrsensor
-			ConnectedDevices.HR.Connected = true
-			go hrsensor.Listen()
-		} else {
-			p.Device().CancelConnection(p)
-			Logger.Println("HR sensor already connected")
-		}
+		hrsensor := HRSensor{Peripheral: p, Initialized: true}
+		ConnectedDevices.HR = hrsensor
+		go hrsensor.Listen()
 	case CSCPeripheral:
-		if !ConnectedDevices.CSC.Connected {
-			cscsensor := CSCSensor{Peripheral: p}
-			ConnectedDevices.CSC = cscsensor
-			ConnectedDevices.CSC.Connected = true
-			go cscsensor.Listen()
-		} else {
-			p.Device().CancelConnection(p)
-			Logger.Println("CSC sensor already connected")
-		}
+		cscsensor := CSCSensor{Peripheral: p, Initialized: true}
+		ConnectedDevices.CSC = cscsensor
+		go cscsensor.Listen()
 	default:
 		p.Device().CancelConnection(p)
 		return
@@ -167,7 +155,8 @@ func onPeriphDisconnected(p gatt.Peripheral, err error) {
 	} else {
 		BroadcastChannel <- msgB
 	}
-	if ConnectedDevices.HR.GetPeripheral().ID() == p.ID() || ConnectedDevices.CSC.GetPeripheral().ID() == p.ID() {
+	if ConnectedDevices.HR.Initialized && ConnectedDevices.HR.GetPeripheral().ID() == p.ID() ||
+		ConnectedDevices.CSC.Initialized && ConnectedDevices.CSC.GetPeripheral().ID() == p.ID() {
 		Logger.Println("Reconnecting", p.ID())
 		p.Device().Connect(p)
 	}
