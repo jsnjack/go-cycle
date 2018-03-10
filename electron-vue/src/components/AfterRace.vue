@@ -50,12 +50,12 @@ export default {
             return formatTime(this.race.finishedAt - this.race.startedAt);
         },
         averageSpeed: function () {
-            let avg = Math.round(this.race.distance / this.duration * 3.6 * 1000 * 1000 * 10) / 10 || 0;
+            let avg = Math.round(this.distance / (this.race.finishedAt - this.race.startedAt) * 3.6 * 1000 * 10) / 10 || 0;
             return avg;
         },
         totalDistance: function () {
             // Total distance in km
-            return Math.round(this.race.distance / 1000 * 10) / 10 || 0;
+            return Math.round(this.distance / 1000 * 10) / 10 || 0;
         }
     },
     methods: {
