@@ -144,6 +144,7 @@ const mutations = {
         state.race.currentRevolutions = 0;
         state.race.totalRevolutions = 0;
         state.race.maxRevPerSec = 0;
+        state.race.point = 0;
         localStorage.clear();
     },
     FINISH_RACE(state) {
