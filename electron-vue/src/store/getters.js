@@ -33,7 +33,7 @@ const getters = {
         return getters.routeDistance - getters.distance || 0;
     },
     routeProgress(state, getters) {
-        return Math.round(getters.distance/getters.routeDistance * 10) / 10 || 0;
+        return Math.round(getters.distance/getters.routeDistance * 100) || 0;
     },
     isRaceFinished(state) {
         return state.race.startedAt && state.race.finishedAt;
