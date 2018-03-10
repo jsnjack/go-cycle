@@ -44,7 +44,9 @@ export default {
         distanceLeft: function (val) {
             if (val <= 0) {
                 this.$store.dispatch("finish_race");
-                this.$router.push("afterrace");
+                setTimeout(()=>{
+                    this.$router.push("afterrace");
+                }, 15000);
             }
         }
     }

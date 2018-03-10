@@ -1,6 +1,11 @@
 <template>
     <div v-show="distanceLeft < 1000" id="widget-finish">
-        {{ distanceLeft }} <span class="units">m</span>
+        <div v-if="!isRaceFinished">
+            {{ distanceLeft }}<span class="units">m</span>
+        </div>
+        <div v-else>
+            FINISH &#x1f44f;
+        </div>
     </div>
 </template>
 
@@ -12,6 +17,7 @@ export default {
     computed: {
         ...vuex.mapGetters([
             "distanceLeft",
+            "isRaceFinished"
         ]),
     }
 };
