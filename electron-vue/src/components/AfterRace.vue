@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <td>Calories</td>
-                <td>{{ race.calories }} kcal</td>
+                <td>{{ calories }} kcal</td>
             </tr>
         </table>
 
@@ -63,6 +63,9 @@ export default {
         },
         isStravaReady: function () {
             return !!this.user.stravaAccessToken;
+        },
+        calories: function () {
+            return Math.round(this.race.calories);
         }
     },
     methods: {
