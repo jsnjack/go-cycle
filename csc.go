@@ -79,6 +79,7 @@ func (sensor *CSCSensor) decode(data []byte) {
 		sensor.Current = cscData
 	} else {
 		sensor.Previous = cscData
+		sensor.Current = cscData
 		return
 	}
 	var time uint16
