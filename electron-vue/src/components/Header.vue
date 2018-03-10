@@ -1,7 +1,7 @@
 <template>
     <div id="header">
         <div>
-            <span @click="finishRace"><FinishIcon v-show="race.startedAt" class="icon finish"/></span>
+            <span @click="finishRace"><FinishIcon v-show="isRaceInProgress" class="icon finish"/></span>
             <HRConnectedIcon class="icon" :class="{offline: isHRConnected}"/>
             <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
             <ConnectedIcon class="icon" :class="{offline: isOffline}"/>
@@ -33,6 +33,9 @@ export default {
         },
         isCSCConnected: function () {
             return !this.devices.csc.connected;
+        },
+        isRaceInProgress: function () {
+            return this.race.startedAt && !this.race.finishedAt;
         }
     },
     methods: {
