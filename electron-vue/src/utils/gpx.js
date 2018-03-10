@@ -48,10 +48,10 @@ function readBlob(blob) {
     });
 }
 
-function createGPX(points, distPerRev) {
+function createGPX(points, distPerRev, startedAt) {
     let DOMParser = require("xmldom").DOMParser;
     let doc = new DOMParser().parseFromString(gpxTemplate, "text/xml");
-    doc.getElementsByTagName("time")[0].textContent = new Date().toISOString();
+    doc.getElementsByTagName("time")[0].textContent = startedAt;
     let trkseg = doc.getElementsByTagName("trkseg")[0];
     for (let i=0; i<points; i++) {
         let data = localStorage.getItem("trkpt_" + i);
