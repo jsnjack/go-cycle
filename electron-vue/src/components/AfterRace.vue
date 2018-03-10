@@ -25,7 +25,7 @@
         </table>
 
         <div class="controls-container">
-            <button class="button-control" @click="onUpload">Upload activity</button>
+            <button v-show="isStravaReady" class="button-control" @click="onUpload">Upload activity</button>
             <button class="button-control" @click="onNew">New race</button>
         </div>
     </div>
@@ -34,6 +34,9 @@
 import vuex from "vuex";
 import {formatTime} from "../utils/time";
 import utils from "../utils/gpx";
+import gpx from '../utils/gpx';
+
+const stravaUploadURL = "https://www.strava.com/api/v3/uploads";
 
 export default {
     name: 'AfterRace',
@@ -45,6 +48,7 @@ export default {
         ]),
         ...vuex.mapState([
             "race",
+            "user"
         ]),
         duration: function () {
             return formatTime(this.race.finishedAt - this.race.startedAt);
@@ -56,6 +60,9 @@ export default {
         totalDistance: function () {
             // Total distance in km
             return Math.round(this.distance / 1000 * 10) / 10 || 0;
+        },
+        isStravaReady: function () {
+            return !!this.user.stravaAccessToken;
         }
     },
     methods: {
@@ -63,7 +70,21 @@ export default {
             this.$router.push("prerace");
         },
         onUpload: function () {
-            console.log(utils.createGPX(this.race.point, this.distancePerRev));
+            let gpxData = utils.createGPX(this.race.point, this.distancePerRev);
+            let formData = new FormData();
+            formData.append("activity_type", "virtualride");
+            formData.append("file", new File([gpxData], "activity.gpx", {type: "text/xml",}));
+            formData.append("data_type", "gpx");
+            formData.append("private", 1);
+            fetch(stravaUploadURL, {
+                method: "POST",
+                body: formData,
+                headers: new Headers({
+                    "Authorization": "Bearer " + this.user.stravaAccessToken,
+                })
+            }).then(response => response.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => console.log('Success:', response));
         }
     }
 };
