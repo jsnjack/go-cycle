@@ -5,7 +5,7 @@ const getters = {
         return value;
     },
     maxSpeed(state, getters) {
-        let value = Math.round(state.race.maxRevPerSec * getters.distance * 3.6 * 1000 * 10) / 10 || 0;
+        let value = Math.round(state.race.maxRevPerSec * getters.distancePerRev * 3.6 * 1000 * 1000 * 10) / 10 || 0;
         value = value.toFixed(1);
         return value;
     },
