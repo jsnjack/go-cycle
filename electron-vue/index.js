@@ -8,6 +8,7 @@ app.on("ready", function() {
         width: 1000,
         height: 600,
         autoHideMenuBar: true,
+        icon: "./src/assets/logo.png",
     });
 
     // Specify entry point to default entry point of vue.js
