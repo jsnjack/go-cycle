@@ -41,7 +41,6 @@ export default {
     methods: {
         finishRace() {
             this.$store.dispatch("finish_race");
-            this.$router.push("afterrace");
         }
     }
 };
