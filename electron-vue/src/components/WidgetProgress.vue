@@ -14,7 +14,7 @@ export default {
         ]),
         progressStyle: function() {
             return {
-                width: this.routeProgress + "%"
+                width: 50 + "%"
             }
         }
     }
@@ -29,9 +29,9 @@ export default {
         width: 100%;
     }
     .progress {
-        opacity: 0.5;
+        opacity: 0.7;
         background: #3e92cc;
         text-align: right;
-        height: 0.5em;
+        height: 1em;
     }
 </style>
