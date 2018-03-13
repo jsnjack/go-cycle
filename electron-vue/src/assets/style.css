@@ -19,6 +19,10 @@ input {
     outline: none;
 }
 
+:focus {
+    outline: none;
+}
+
 .button-control {
     cursor: pointer;
     color: brown;
