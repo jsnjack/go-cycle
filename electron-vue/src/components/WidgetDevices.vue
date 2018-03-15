@@ -14,7 +14,7 @@
                     <SpeedIcon class="icon"/>
                 </td>
                 <td class="measurement">
-                    {{ currentSpeed }} <span class="unit">km/h</span>
+                    {{ getCurrentSpeed }} <span class="unit">km/h</span>
                 </td>
             </tr>
             <tr>
@@ -92,6 +92,9 @@ export default {
         },
         getRaceDuration: function () {
             return formatTime(this.now.getTime() - this.race.startedAt.getTime());
+        },
+        getCurrentSpeed: function () {
+            return this.currentSpeed.toFixed(1);
         }
     },
     data () {

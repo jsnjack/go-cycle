@@ -1,7 +1,7 @@
 <template>
     <tr class="opponent">
         <td :style="nameStyle" class="name">{{ opponent.name }}</td>
-        <td v-if="diffDistance" class="diff">{{ diffDistance }} <span class="units">m</span></td>
+        <td v-if="diffDistance != '0.0'" class="diff">{{ diffDistance }} <span class="units">m</span></td>
     </tr>
 </template>
 <script>
@@ -33,7 +33,7 @@ export default {
         },
         diffDistance: function() {
             let diff = this.race.opponents[0].distance - this.opponent.distance;
-            return -Math.round(diff * 10) / 10;
+            return (-Math.round(diff * 10) / 10).toFixed(1);
         }
     }
 };
