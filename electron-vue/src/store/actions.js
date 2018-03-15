@@ -27,7 +27,7 @@ const actions = {
         commit("FINISH_RACE");
     },
     update_opponent({state, commit, dispatch}, pointID) {
-        if (pointID < state.race.gpxData.length && state.race.gpxData[0].time >= 0) {
+        if (pointID < state.race.gpxData.length && state.race.gpxData[0].time >= 0 && !state.isRaceFinished) {
             let timeout = state.race.gpxData[pointID + 1].time - state.race.gpxData[pointID].time;
             setTimeout(()=>{
                 commit("SET_OPPONENT_DISTANCE", {id: 1, distance: state.race.gpxData[pointID + 1].distance});

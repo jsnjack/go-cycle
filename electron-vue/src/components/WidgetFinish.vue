@@ -1,5 +1,5 @@
 <template>
-    <div v-show="distanceLeft < 700" id="widget-finish">
+    <div v-show="distanceLeft < 700 || isRaceFinished" id="widget-finish">
         <div v-if="!isRaceFinished">
             {{ distanceLeft }}<span class="units">m</span>
         </div>
