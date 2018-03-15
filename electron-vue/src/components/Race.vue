@@ -11,6 +11,7 @@
                 <WidgetDevices/>
                 <WidgetProgress/>
                 <WidgetFinish/>
+                <WidgetOpponents/>
             </div>
         </div>
     </div>
@@ -20,12 +21,14 @@ import vuex from "vuex";
 import WidgetDevices from './WidgetDevices';
 import WidgetProgress from './WidgetProgress';
 import WidgetFinish from './WidgetFinish';
+import WidgetOpponents from './WidgetOpponents';
+
 
 export default {
     name: 'Race',
 
     components: {
-        WidgetDevices, WidgetProgress, WidgetFinish
+        WidgetDevices, WidgetProgress, WidgetFinish, WidgetOpponents
     },
 
     computed: {
@@ -33,7 +36,8 @@ export default {
             "race"
         ]),
         ...vuex.mapGetters([
-            "distanceLeft"
+            "distanceLeft",
+            "distance",
         ]),
         getVideoFile: function () {
             return [this.race.videoFile];
@@ -45,6 +49,9 @@ export default {
             if (val <= 0) {
                 this.$store.dispatch("finish_race");
             }
+        },
+        distance: function (val) {
+            this.$store.commit("SET_OPPONENT_DISTANCE", {id: 0, distance: val});
         }
     }
 };

@@ -43,7 +43,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="info">Import route from GPX file</div>
+                        <div class="info">Import a route from GPX file and race against your previous effort</div>
                         <input id="gpx_track" type="file" accept=".gpx" @change="gpxTrack"/>
                     </div>
 
@@ -83,6 +83,7 @@
                 this.$router.push("race");
                 this.$store.commit("START_RACE");
                 this.$store.dispatch("ws_stopScanning");
+                this.$store.dispatch("update_opponent", 0);
             },
             saveFileReference(event) {
                 let objectURL = window.URL.createObjectURL(event.target.files[0]);

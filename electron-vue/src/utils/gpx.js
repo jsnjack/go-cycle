@@ -1,6 +1,7 @@
 const R = 6371000;
 
 /* eslint-disable max-len */
+// A template for creating a gpx file
 const gpxTemplate = `
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Go-cycle" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
@@ -19,6 +20,8 @@ const gpxTemplate = `
 function toRad(n) {
     return n * Math.PI / 180;
 }
+
+// Calculate distance assuming the Earth is spherical
 function getDistanceHaversine(lat1, lon1, lat2, lon2) {
     let x1 = lat2 - lat1;
     let dLat = toRad(x1);
@@ -34,6 +37,7 @@ function getDistanceHaversine(lat1, lon1, lat2, lon2) {
 
 const getDistance = getDistanceHaversine;
 
+// Read imported gpx file
 function readBlob(blob) {
     return new Promise((resolve, reject) => {
         let reader = new FileReader();
@@ -48,6 +52,7 @@ function readBlob(blob) {
     });
 }
 
+// Create gpx file out of recorded data
 function createGPX(points, distPerRev, startedAt) {
     let DOMParser = require("xmldom").DOMParser;
     let doc = new DOMParser().parseFromString(gpxTemplate, "text/xml");
@@ -78,8 +83,47 @@ function createGPX(points, distPerRev, startedAt) {
     return new XMLSerializer().serializeToString(doc);
 }
 
+// Extracts data from gpx file, like distance
+function extractDataFromGPX(doc) {
+    let started = performance.now();
+    let distance = 0;
+    let points = doc.getElementsByTagName("trkpt");
+    let container = new Array(points.length);
+    let baseTime;
+    if (points[0].getElementsByTagName("time").length) {
+        baseTime = new Date(points[0].getElementsByTagName("time")[0].textContent).getTime();
+    }
+    container[0] = {
+        distance: 0,
+        elevation: points[0].getElementsByTagName("ele")[0].textContent,
+    };
+    if (baseTime) {
+        container[0].time = 0;
+    }
+    for (let i=0; i<points.length - 1; i++) {
+        distance += utils.getDistance(
+            points[i].getAttribute("lat"),
+            points[i].getAttribute("lon"),
+            points[i+1].getAttribute("lat"),
+            points[i+1].getAttribute("lon")
+        );
+        container[i+1] = {
+            distance: distance,
+            elevation: points[i+1].getElementsByTagName("ele")[0].textContent,
+        };
+        if (baseTime) {
+            container[i+1].time = new Date(
+                points[i+1].getElementsByTagName("time")[0].textContent
+            ).getTime() - baseTime;
+        }
+    }
+    let finished = performance.now();
+    console.debug("Extracting data from GPX took, ms:", finished - started);
+    return container;
+}
+
 const utils = {
-    readBlob, getDistance, createGPX,
+    readBlob, getDistance, createGPX, extractDataFromGPX,
 };
 
 export default utils;

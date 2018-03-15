@@ -24,11 +24,14 @@ const state = {
         stravaAccessToken: window.process.env.GO_CYCLE_STRAVA_TOKEN,
     },
     race: {
-        gpxDoc: null,
-        gpxDistToElev: [],
-        simpleRouteDistance: 0, // m, route distance provided manually
+        simpleRouteDistance: 0, // m, route distance provided manually or calculated from gpx
 
         videoFile: null,
+        gpxData: [],
+        opponents: [{
+            name: "You",
+            distance: 1,
+        }],
 
         currentBPM: 0,
         calories: 0, // kCals
@@ -43,7 +46,6 @@ const state = {
         totalRevolutions: 0,
 
         point: 0, // Amount of recieved datapoints from csc sensor
-
     },
 };
 

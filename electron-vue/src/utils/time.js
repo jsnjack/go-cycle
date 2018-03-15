@@ -1,3 +1,4 @@
+// Formats time in hh:mm:ss
 function formatTime(mseconds) {
     const seconds = Math.round(mseconds/ 1000);
     const h = Math.floor(seconds / 3600);

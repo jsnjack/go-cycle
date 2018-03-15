@@ -1,12 +1,10 @@
 const getters = {
     currentSpeed(state, getters) {
         let value = Math.round(state.race.currentRevPerSec * getters.distancePerRev * 3.6 * 1000 * 1000 * 10) / 10 || 0;
-        value = value.toFixed(1);
         return value;
     },
     maxSpeed(state, getters) {
         let value = Math.round(state.race.maxRevPerSec * getters.distancePerRev * 3.6 * 1000 * 1000 * 10) / 10 || 0;
-        value = value.toFixed(1);
         return value;
     },
     distancePerRev(state) {
@@ -20,20 +18,14 @@ const getters = {
     },
     routeDistance(state) {
         // Route distance in meters
-        let total = 0;
-        if (state.race.gpxDistToElev.length) {
-            return state.race.gpxDistToElev[state.race.gpxDistToElev.length - 1].distance;
-        } else {
-            total = state.race.simpleRouteDistance;
-        }
-        return total;
+        return state.race.simpleRouteDistance;
     },
     distanceLeft(state, getters) {
         // Distance left in meters
         return getters.routeDistance - getters.distance || 0;
     },
     routeProgress(state, getters) {
-        return Math.round(getters.distance/getters.routeDistance * 100) || 0;
+        return Math.round(getters.distance/getters.routeDistance * 100 * 100) / 100 || 0;
     },
     isRaceFinished(state) {
         return state.race.startedAt && state.race.finishedAt;
