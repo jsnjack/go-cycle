@@ -91,7 +91,10 @@ export default {
             return Math.round(this.race.calories);
         },
         getRaceDuration: function () {
-            return formatTime(this.now.getTime() - this.race.startedAt.getTime());
+            if (this.race.startedAt) {
+                return formatTime(this.now.getTime() - this.race.startedAt.getTime());
+            }
+            return 0;
         },
         getCurrentSpeed: function () {
             return this.currentSpeed.toFixed(1);

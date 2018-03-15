@@ -20,7 +20,10 @@ export default {
             "race",
         ]),
         opponentProgress: function () {
-            return Math.round(this.race.opponents[1].distance / this.race.simpleRouteDistance * 100 * 100) / 100 || 0;
+            if (this.race.opponents.length > 1) {
+                return Math.round(this.race.opponents[1].distance / this.race.simpleRouteDistance * 100 * 100) / 100 || 0;
+            }
+            return 0;
         },
         progressDiff: function () {
             return this.routeProgress - this.opponentProgress;
