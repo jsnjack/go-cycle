@@ -12,6 +12,7 @@
                 <WidgetProgress/>
                 <WidgetFinish/>
                 <WidgetOpponents/>
+                <WidgetWarmup/>
             </div>
         </div>
     </div>
@@ -22,13 +23,13 @@ import WidgetDevices from './WidgetDevices';
 import WidgetProgress from './WidgetProgress';
 import WidgetFinish from './WidgetFinish';
 import WidgetOpponents from './WidgetOpponents';
-
+import WidgetWarmup from './WidgetWarmup';
 
 export default {
     name: 'Race',
 
     components: {
-        WidgetDevices, WidgetProgress, WidgetFinish, WidgetOpponents
+        WidgetDevices, WidgetProgress, WidgetFinish, WidgetOpponents, WidgetWarmup,
     },
 
     computed: {
@@ -40,7 +41,9 @@ export default {
             "distance",
         ]),
         getVideoFile: function () {
-            return [this.race.videoFile];
+            if (this.race.startedAt) {
+                return [this.race.videoFile];
+            }
         }
     },
 

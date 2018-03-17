@@ -22,6 +22,7 @@ const state = {
         age: 30,
         wheelSize: "2136", // mm
         stravaAccessToken: window.process.env.GO_CYCLE_STRAVA_TOKEN,
+        warmUpDuration: 5 * 60, // s
     },
     race: {
         simpleRouteDistance: 0, // m, route distance provided manually or calculated from gpx

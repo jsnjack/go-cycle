@@ -122,6 +122,10 @@ const mutations = {
         }
         state.race.gpxData = data;
     },
+    NEW_RACE(state) {
+        state.race.startedAt = null;
+        state.race.finishedAt = null;
+    },
     START_RACE(state) {
         state.race.currentBPM = 0;
         state.race.calories = 0;
@@ -140,6 +144,9 @@ const mutations = {
     },
     UPDATE_USER_WEIGHT(state, value) {
         state.user.weight = parseInt(value, 10);
+    },
+    UPDATE_WARM_UP_DURATION(state, value) {
+        state.user.warmUpDuration = parseInt(value, 10);
     },
     UPDATE_USER_GENDER(state, value) {
         state.user.gender = value;

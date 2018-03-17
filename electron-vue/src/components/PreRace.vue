@@ -33,6 +33,10 @@
                         <option value="2155">700x32C</option>
                     </select>
                 </div>
+                <div class="row">
+                    <div class="info">Warmup duration, s</div>
+                    <input type="number" :value="user.warmUpDuration" @input="updateWarmUpDuration"/>
+                </div>
             </div>
 
             <div class="section">
@@ -80,10 +84,9 @@
                 this.$router.push("connect");
             },
             onStart() {
+                this.$store.commit("NEW_RACE");
                 this.$router.push("race");
-                this.$store.commit("START_RACE");
                 this.$store.dispatch("ws_stopScanning");
-                this.$store.dispatch("update_opponent", 0);
             },
             saveFileReference(event) {
                 let objectURL = window.URL.createObjectURL(event.target.files[0]);
@@ -100,6 +103,9 @@
             },
             updateWeight(event) {
                 this.$store.commit("UPDATE_USER_WEIGHT", event.target.value);
+            },
+            updateWarmUpDuration(event) {
+                this.$store.commit("UPDATE_WARM_UP_DURATION", event.target.value);
             },
             updateGender(event) {
                 this.$store.commit("UPDATE_USER_GENDER", event.target.value);
