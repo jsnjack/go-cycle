@@ -22,7 +22,7 @@ const getters = {
     },
     distanceLeft(state, getters) {
         // Distance left in meters
-        return getters.routeDistance - getters.distance || 0;
+        return Math.round(getters.routeDistance - getters.distance) || 0;
     },
     routeProgress(state, getters) {
         return Math.round(getters.distance/getters.routeDistance * 100 * 100) / 100 || 0;
