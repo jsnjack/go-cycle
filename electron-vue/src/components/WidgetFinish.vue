@@ -4,7 +4,7 @@
             {{ distanceLeft }}<span class="units">m</span>
         </div>
         <div v-else-if="coolDown">
-            <div class="cool-down-title">COOL DOWN</div>
+            <div class="cool-down-title">COOLDOWN</div>
             <div class="coll-down-timer">{{ collingDownTime }}</div>
             <div class="cool-down-button">
                 <button class="button-control finish-button" @click="onFinish">Finish</button>
