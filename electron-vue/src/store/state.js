@@ -30,7 +30,7 @@ const state = {
         gpxData: [],
         opponents: [{
             name: "You",
-            distance: 1,
+            distance: 0,
         }],
 
         currentBPM: 0,
