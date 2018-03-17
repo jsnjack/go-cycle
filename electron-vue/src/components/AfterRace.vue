@@ -78,7 +78,7 @@ export default {
             formData.append("activity_type", "virtualride");
             formData.append("file", new File([gpxData], "activity.gpx", {type: "text/xml",}));
             formData.append("data_type", "gpx");
-            formData.append("description", "go-cycle session");
+            formData.append("name", "go-cycle activity");
             fetch(stravaUploadURL, {
                 method: "POST",
                 body: formData,
