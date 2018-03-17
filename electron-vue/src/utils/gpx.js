@@ -99,12 +99,10 @@ function createGPX(points, distPerRev, startedAt, gpxData) {
 
 
 function getCoordinatesFromDistance(distance, gpxData, offset) {
-    console.log("O", offset);
     for (let i=offset; i<gpxData.length; i++) {
         if (gpxData[i].distance > distance) {
             let D = gpxData[i].distance - gpxData[i-1].distance;
             let d = distance - gpxData[i-1].distance;
-            console.log("I", i);
             return [
                 gpxData[i-1].lat + d / D * (gpxData[i].lat - gpxData[i-1].lat),
                 gpxData[i-1].lon + d / D * (gpxData[i].lon - gpxData[i-1].lon),
