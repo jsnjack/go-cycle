@@ -6,7 +6,9 @@
                     :src="getVideoFile"
                     autoplay="autoplay"
                     muted="true"
-                    loop="true">
+                    loop="true"
+                    width="100%"
+                    height="100%">
                 </video>
                 <WidgetDevices/>
                 <WidgetProgress/>
