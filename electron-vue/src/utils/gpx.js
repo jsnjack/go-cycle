@@ -95,7 +95,9 @@ function extractDataFromGPX(doc) {
     }
     container[0] = {
         distance: 0,
-        elevation: points[0].getElementsByTagName("ele")[0].textContent,
+        elevation: parseFloat(points[0].getElementsByTagName("ele")[0].textContent),
+        lat: parseFloat(points[0].getAttribute("lat")),
+        lon: parseFloat(points[0].getAttribute("lon")),
     };
     if (baseTime) {
         container[0].time = 0;
@@ -109,7 +111,9 @@ function extractDataFromGPX(doc) {
         );
         container[i+1] = {
             distance: distance,
-            elevation: points[i+1].getElementsByTagName("ele")[0].textContent,
+            lat: parseFloat(points[i+1].getAttribute("lat")),
+            lon: parseFloat(points[i+1].getAttribute("lon")),
+            elevation: parseFloat(points[i+1].getElementsByTagName("ele")[0].textContent),
         };
         if (baseTime) {
             container[i+1].time = new Date(
