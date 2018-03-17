@@ -73,7 +73,7 @@ export default {
             this.$router.push("prerace");
         },
         onUpload: function () {
-            let gpxData = utils.createGPX(this.race.point, this.distancePerRev, this.race.startedAt.toISOString());
+            let gpxData = utils.createGPX(this.race.point, this.distancePerRev, this.race.startedAt.toISOString(), this.race.gpxData);
             let formData = new FormData();
             formData.append("activity_type", "virtualride");
             formData.append("file", new File([gpxData], "activity.gpx", {type: "text/xml",}));

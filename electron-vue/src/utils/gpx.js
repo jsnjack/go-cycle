@@ -53,7 +53,9 @@ function readBlob(blob) {
 }
 
 // Create gpx file out of recorded data
-function createGPX(points, distPerRev, startedAt) {
+function createGPX(points, distPerRev, startedAt, gpxData) {
+    let started = performance.now();
+    let offset = 1;
     let DOMParser = require("xmldom").DOMParser;
     let doc = new DOMParser().parseFromString(gpxTemplate, "text/xml");
     doc.getElementsByTagName("time")[0].textContent = startedAt;
@@ -67,7 +69,16 @@ function createGPX(points, distPerRev, startedAt) {
             time.textContent = dataObj.time;
             let extensions = doc.createElement("extensions");
             let distance = doc.createElement("distance");
-            distance.textContent = dataObj.rev * distPerRev;
+            let d = dataObj.rev * distPerRev;
+            distance.textContent = d;
+            if (gpxData.length > 0) {
+                let P = getCoordinatesFromDistance(d, gpxData, offset);
+                if (P[0] && P[1]) {
+                    trkpt.setAttribute("lat", P[0]);
+                    trkpt.setAttribute("lon", P[1]);
+                }
+                offset = P[2];
+            }
             if (dataObj.hr) {
                 let hr = doc.createElement("heartrate");
                 hr.textContent = dataObj.hr;
@@ -80,7 +91,28 @@ function createGPX(points, distPerRev, startedAt) {
         }
     }
     let XMLSerializer = require("xmldom").XMLSerializer;
-    return new XMLSerializer().serializeToString(doc);
+    let serialized = new XMLSerializer().serializeToString(doc);
+    let finished = performance.now();
+    console.debug("Creating GPX took, ms:", finished - started);
+    return serialized;
+}
+
+
+function getCoordinatesFromDistance(distance, gpxData, offset) {
+    console.log("O", offset);
+    for (let i=offset; i<gpxData.length; i++) {
+        if (gpxData[i].distance > distance) {
+            let D = gpxData[i].distance - gpxData[i-1].distance;
+            let d = distance - gpxData[i-1].distance;
+            console.log("I", i);
+            return [
+                gpxData[i-1].lat + d / D * (gpxData[i].lat - gpxData[i-1].lat),
+                gpxData[i-1].lon + d / D * (gpxData[i].lon - gpxData[i-1].lon),
+                i-1,
+            ];
+        }
+    }
+    return [null, null, 0];
 }
 
 // Extracts data from gpx file, like distance
