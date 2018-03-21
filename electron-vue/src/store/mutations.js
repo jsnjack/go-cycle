@@ -74,22 +74,7 @@ const mutations = {
         if (!state.devices.hr.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
-        let energyPerMin;
-        let now = new Date().getTime();
-        let period = now - state.race.lastHREvent; // ms
         state.race.currentBPM = data.bpm;
-        // https://community.fitbit.com/t5/Charge-HR/How-Charge-HR-calculates-calories-burned/td-p/1021859
-        if (state.race.lastHREvent !== 0 && state.race.startedAt && !state.race.finishedAt) {
-            /* eslint-disable max-len */
-            if (state.user.gender == "m") {
-                energyPerMin = -55.0969 + 0.6309 * state.race.currentBPM + 0.1988 * state.user.weight + 0.2017 * state.user.age;
-            } else {
-                energyPerMin = -20.4022 + 0.4472 * state.race.currentBPM - 0.1263 * state.user.weight + 0.074 * state.user.age;
-            }
-            /* eslint-enable max-len */
-            state.race.calories += energyPerMin * 0.23 / 1000 / 60 * period; // kCal
-        }
-        state.race.lastHREvent = now;
     },
     MEASUREMENT_CSC(state, data) {
         if (!state.devices.csc.connected) {
@@ -105,6 +90,7 @@ const mutations = {
             let point = {
                 time: new Date().toISOString(),
                 rev: state.race.totalRevolutions,
+                rev_per_sec: data.rev_per_sec,
                 hr: state.race.currentBPM,
             };
             localStorage.setItem("trkpt_" + state.race.point, JSON.stringify(point));
@@ -128,8 +114,6 @@ const mutations = {
     },
     START_RACE(state) {
         state.race.currentBPM = 0;
-        state.race.calories = 0;
-        state.race.lastHREvent = 0;
         state.race.startedAt = new Date();
         state.race.finishedAt = null;
         state.race.currentRevPerSec = 0;

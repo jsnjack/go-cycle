@@ -35,8 +35,7 @@ const state = {
         }],
 
         currentBPM: 0,
-        calories: 0, // kCals
-        lastHREvent: 0,
+        energy: 0, // J
 
         startedAt: null,
         finishedAt: null,
