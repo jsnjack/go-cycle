@@ -37,6 +37,12 @@
                     <div class="info">Warmup duration, s</div>
                     <input type="number" :value="user.warmUpDuration" @input="updateWarmUpDuration"/>
                 </div>
+                <div class="row">
+                    <div class="info">Trainer model</div>
+                    <select>
+                        <option value="">CycleOps Fluid</option>
+                    </select>
+                </div>
             </div>
 
             <div class="section">
@@ -143,6 +149,9 @@
         border: none;
         width: 100px;
         margin-left: 2rem;
+    }
+    select {
+        width: auto;
     }
     input[type='file'] {
         width: 100%;

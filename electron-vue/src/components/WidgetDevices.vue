@@ -27,6 +27,14 @@
             </tr>
             <tr>
                 <td>
+                    <PowerIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ getPower }} <span class="unit">W</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <CaloriesIcon class="icon"/>
                 </td>
                 <td class="measurement">
@@ -51,14 +59,16 @@ import DistanceIcon from '../assets/distance.svg';
 import SpeedIcon from '../assets/speed-meter.svg';
 import CaloriesIcon from '../assets/fire.svg';
 import TimeIcon from '../assets/time.svg';
+import PowerIcon from '../assets/power.svg';
 import {formatTime} from "../utils/time";
+import powerCurve from "../trainers/cycleops_fluid";
 
 
 export default {
     name: 'WidgetDevices',
 
     components: {
-        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon
+        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon, PowerIcon
     },
 
     mounted () {
@@ -98,7 +108,11 @@ export default {
         },
         getCurrentSpeed: function () {
             return this.currentSpeed.toFixed(1);
-        }
+        },
+        getPower: function () {
+            let power = powerCurve(this.currentSpeed);
+            return Math.round(power);
+        },
     },
     data () {
         return {
