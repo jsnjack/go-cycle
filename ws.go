@@ -14,6 +14,9 @@ var clients []*websocket.Conn
 // BroadcastChannel contains messages to send to all connected clients
 var BroadcastChannel = make(chan []byte)
 
+// SendingSynth shows if synth data is being sent
+var SendingSynth = false
+
 // IncomingMessage ...
 type IncomingMessage struct {
 	Type string          `json:"type"`
@@ -56,7 +59,8 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Send artificial sensor's events
-	if *debugFlag {
+	if *debugFlag && !SendingSynth {
+		SendingSynth = true
 		go func() {
 			for {
 				SendSynthCSCEvent()
