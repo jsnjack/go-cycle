@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
-	"math"
 
 	"github.com/paypal/gatt"
 )
@@ -13,10 +12,10 @@ var SpeedServiceUUID = gatt.UUID16(0x1816)
 
 // CSCMessage is a message from the CSC sensor
 type CSCMessage struct {
-	ID           string  `json:"id"` // Device id
-	RecognizedAs string  `json:"recognizedAs"`
-	Revolutions  uint32  `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
-	RevPerSec    float64 `json:"rev_per_sec"` // Revolutions per second, for calculating speed
+	ID           string `json:"id"` // Device id
+	RecognizedAs string `json:"recognizedAs"`
+	Revolutions  uint32 `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
+	Time         uint16 `json:"time"`        // Time since last measurement, ms
 }
 
 // SpeedSensorData is data from the sensor
@@ -88,16 +87,12 @@ func (sensor *CSCSensor) decode(data []byte) {
 	} else {
 		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
 	}
-	rps := float64(sensor.Current.Revolutions-sensor.Previous.Revolutions) / (float64(time) * 1024)
-	if math.IsNaN(rps) || math.IsInf(rps, 0) {
-		rps = 0
-	}
-	Logger.Printf("RPS: %f\n", rps)
+	Logger.Printf("Rev: %d, Time: %d\n", sensor.Current.Revolutions, time)
 	msgCSC := CSCMessage{
 		ID:           sensor.Peripheral.ID(),
 		RecognizedAs: GetActiveDeviceType(sensor.Peripheral.ID()),
 		Revolutions:  sensor.Current.Revolutions - sensor.Previous.Revolutions,
-		RevPerSec:    rps,
+		Time:         time,
 	}
 	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
 	msgB, err := json.Marshal(msgWS)
