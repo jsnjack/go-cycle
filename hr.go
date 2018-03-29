@@ -94,7 +94,7 @@ func SendSynthHREvent() {
 	msgHR := HRMessage{
 		ID:           "fake-hr",
 		RecognizedAs: "hr",
-		BPM:          80,
+		BPM:          uint16(Random(60, 100)),
 	}
 	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgHR}
 	msgB, _ := json.Marshal(msgWS)

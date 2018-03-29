@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
+	"math/rand"
+	"time"
 
 	"github.com/paypal/gatt"
 )
@@ -125,10 +127,16 @@ func SendSynthCSCEvent() {
 	msgCSC := CSCMessage{
 		ID:           "fake-csc",
 		RecognizedAs: "csc",
-		Revolutions:  10,
+		Revolutions:  uint32(Random(8, 11)),
 		Time:         1000,
 	}
 	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
 	msgB, _ := json.Marshal(msgWS)
 	BroadcastChannel <- msgB
+}
+
+// Random generates random integer number within threshold
+func Random(min, max int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(max-min) + min
 }
