@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -53,6 +54,17 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 		ws.Close()
 		removeConnection(ws)
 	}()
+
+	// Send artificial sensor's events
+	if *debugFlag {
+		go func() {
+			for {
+				SendSynthCSCEvent()
+				SendSynthHREvent()
+				time.Sleep(1 * time.Second)
+			}
+		}()
+	}
 
 	for {
 		var msg IncomingMessage

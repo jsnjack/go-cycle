@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"github.com/paypal/gatt/examples/option"
 )
 
+var debugFlag *bool
+
 // IgnoredDevices is a list of not interesting devices
 var IgnoredDevices []string
 
@@ -16,6 +19,9 @@ var IgnoredDevices []string
 var Logger *log.Logger
 
 func init() {
+	debugFlag = flag.Bool("debug", false, "Debug mode")
+	flag.Parse()
+
 	Logger = log.New(os.Stdout, "", log.Lmicroseconds|log.Lshortfile)
 }
 

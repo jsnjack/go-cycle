@@ -88,3 +88,15 @@ func (sensor *HRSensor) GetType() PeripheralType {
 func (sensor *HRSensor) GetPeripheral() gatt.Peripheral {
 	return sensor.Peripheral
 }
+
+// SendSynthHREvent sends synthetic HR event
+func SendSynthHREvent() {
+	msgHR := HRMessage{
+		ID:           "fake-hr",
+		RecognizedAs: "hr",
+		BPM:          80,
+	}
+	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgHR}
+	msgB, _ := json.Marshal(msgWS)
+	BroadcastChannel <- msgB
+}

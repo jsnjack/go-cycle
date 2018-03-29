@@ -119,3 +119,16 @@ func (sensor *CSCSensor) GetType() PeripheralType {
 func (sensor *CSCSensor) GetPeripheral() gatt.Peripheral {
 	return sensor.Peripheral
 }
+
+// SendSynthCSCEvent sends synthetic CSC event
+func SendSynthCSCEvent() {
+	msgCSC := CSCMessage{
+		ID:           "fake-csc",
+		RecognizedAs: "csc",
+		Revolutions:  1,
+		Time:         1000,
+	}
+	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
+	msgB, _ := json.Marshal(msgWS)
+	BroadcastChannel <- msgB
+}
