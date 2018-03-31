@@ -107,7 +107,7 @@ export default {
             return 0;
         },
         getCurrentSpeed: function () {
-            return this.currentSpeed.toFixed(1);
+            return this.race.speed.toFixed(1);
         },
         getPower: function () {
             let power = trainer.getYfromX(this.race.csc.speed);

@@ -25,7 +25,12 @@ const state = {
         warmUpDuration: 5 * 60, // s
     },
     race: {
-        simpleRouteDistance: 0, // m, route distance provided manually or calculated from gpx
+        totalDistance: 0, // m, route distance provided manually or calculated from gpx
+        maxSpeed: 0, // km/h
+
+        // Current values
+        speed: 0,
+        distance: 0,
 
         videoFile: null,
         gpxData: [],
@@ -40,12 +45,11 @@ const state = {
         startedAt: null,
         finishedAt: null,
 
-        currentRevPerSec: 0,
-        maxRevPerSec: 0,
-        currentRevolutions: 0,
-        totalRevolutions: 0,
-
-        point: 0, // Amount of recieved datapoints from csc sensor
+        csc: {
+            speed: 0,
+            distance: 0,
+            points: 0, // Amount of recieved datapoints from csc sensor
+        },
     },
 };
 
