@@ -81,9 +81,6 @@
                     "race",
                     "user",
                 ]),
-                ...vuex.mapGetters([
-                    "routeDistance",
-                ]),
         },
         methods: {
             onBack() {

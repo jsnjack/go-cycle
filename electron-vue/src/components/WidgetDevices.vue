@@ -61,7 +61,7 @@ import CaloriesIcon from '../assets/fire.svg';
 import TimeIcon from '../assets/time.svg';
 import PowerIcon from '../assets/power.svg';
 import {formatTime} from "../utils/time";
-import powerCurve from "../trainers/cycleops_fluid";
+import trainer from "../trainers/cycleops_fluid";
 
 
 export default {
@@ -110,7 +110,7 @@ export default {
             return this.currentSpeed.toFixed(1);
         },
         getPower: function () {
-            let power = powerCurve(this.currentSpeed);
+            let power = trainer.getYfromX(this.race.csc.speed);
             return Math.round(power);
         },
     },

@@ -21,7 +21,7 @@ export default {
         ]),
         opponentProgress: function () {
             if (this.race.opponents.length > 1) {
-                return Math.round(this.race.opponents[1].distance / this.race.simpleRouteDistance * 100 * 100) / 100 || 0;
+                return Math.round(this.race.opponents[1].distance / this.race.totalDistance * 100 * 100) / 100 || 0;
             }
             return 0;
         },

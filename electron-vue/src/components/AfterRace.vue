@@ -16,7 +16,7 @@
             </tr>
             <tr>
                 <td>Max speed</td>
-                <td>{{ maxSpeed }} km/h</td>
+                <td>{{ race.maxSpeed }} km/h</td>
             </tr>
             <tr>
                 <td>Calories</td>
@@ -43,7 +43,6 @@ export default {
     computed: {
         ...vuex.mapGetters([
             "distance",
-            "maxSpeed",
             "distancePerRev"
         ]),
         ...vuex.mapState([

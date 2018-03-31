@@ -41,6 +41,7 @@ export default {
         ...vuex.mapGetters([
             "distanceLeft",
             "distance",
+            "isRaceInProgress",
         ]),
         getVideoFile: function () {
             if (this.race.startedAt) {
@@ -57,7 +58,7 @@ export default {
         },
         distance: function (val) {
             this.$store.commit("SET_OPPONENT_DISTANCE", {id: 0, distance: val});
-        }
+        },
     }
 };
 </script>
