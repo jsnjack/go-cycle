@@ -1,11 +1,11 @@
 
 const getters = {
     currentSpeed(state) {
-        return state.race.csc.speed || 0;
+        return state.race.speed || 0;
     },
-    distance(state, getters) {
+    distance(state) {
         // Current distance in meters
-        let value = 0 * state.race.totalRevolutions || 0;
+        let value = state.race.distance;
         value = Math.round(value);
         return value;
     },

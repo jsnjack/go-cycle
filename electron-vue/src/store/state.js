@@ -34,6 +34,7 @@ const state = {
 
         videoFile: null,
         gpxData: [],
+        currentGPXID: 0,
         opponents: [{
             name: "You",
             distance: 0,

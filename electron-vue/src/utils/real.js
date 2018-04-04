@@ -1,5 +1,3 @@
-import trainer from "../trainers/cycleops_fluid";
-
 // https://www.gribble.org/cycling/power_v_speed.html
 
 const g = 9.8067; // gravitational constant, m/s^2
@@ -127,7 +125,7 @@ function getMinPositive(a) {
 }
 
 const real = {
-    speedFromSensor, toKMH, getRealSpeed,
+    speedFromSensor, toKMH, getRealSpeed, toMS,
 };
 
 export default real;

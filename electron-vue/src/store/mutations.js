@@ -79,6 +79,7 @@ const mutations = {
     },
     MEASUREMENT_CSC(state, data) {
         let started = performance.now();
+        let grade = 0;
         if (!state.devices.csc.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
@@ -87,13 +88,22 @@ const mutations = {
         if (state.race.startedAt && !state.race.finishedAt) {
             // Race is in progress
             state.race.csc.point++;
-            state.race.speed = real.getRealSpeed(state.race.csc.speed, 0.1, state.user.weight);
+            let estDistance = state.race.distance + state.race.csc.distance;
+            for (let i=state.race.currentGPXID; i<state.race.gpxData.length - 1; i++) {
+                state.race.currentGPXID = i;
+                grade = state.race.gpxData[i].grade;
+                if (state.race.gpxData[i].distance <= estDistance && state.race.gpxData[i+1].distance > estDistance) {
+                    break;
+                }
+            }
+            state.race.speed = real.getRealSpeed(state.race.csc.speed, grade, state.user.weight);
             if (state.race.speed > state.race.maxSpeed) {
                 state.race.maxSpeed = state.race.speed;
             }
+            state.race.distance += real.toMS(state.race.speed) * data.time / 1000;
         }
         let finished = performance.now();
-        console.debug(`CSC data: took ${finished - started}, speed ${state.race.speed} (${state.race.csc.speed})`);
+        console.debug(`CSC data: took ${finished - started}, grade, ${grade}, speed ${state.race.speed} (${state.race.csc.speed})`);
     },
     VIDEOFILE_URL(state, urlObj) {
         state.race.videoFile = urlObj;
