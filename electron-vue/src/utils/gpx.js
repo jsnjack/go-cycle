@@ -54,7 +54,7 @@ function readBlob(blob) {
 }
 
 // Create gpx file out of recorded data
-function createGPX(points, distPerRev, startedAt, gpxData) {
+function createGPX(points, startedAt, gpxData) {
     let started = performance.now();
     let offset = 1;
     let DOMParser = require("xmldom").DOMParser;
@@ -70,10 +70,9 @@ function createGPX(points, distPerRev, startedAt, gpxData) {
             time.textContent = dataObj.time;
             let extensions = doc.createElement("extensions");
             let distance = doc.createElement("distance");
-            let d = dataObj.rev * distPerRev;
-            distance.textContent = d;
+            distance.textContent = dataObj.distance;
             if (gpxData.length > 0) {
-                let P = getCoordinatesFromDistance(d, gpxData, offset);
+                let P = getCoordinatesFromDistance(dataObj.distance, gpxData, offset);
                 if (P[0] && P[1]) {
                     trkpt.setAttribute("lat", P[0]);
                     trkpt.setAttribute("lon", P[1]);

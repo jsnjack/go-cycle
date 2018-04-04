@@ -46,6 +46,8 @@ const state = {
         startedAt: null,
         finishedAt: null,
 
+        points: 0,
+
         csc: {
             speed: 0,
             distance: 0,

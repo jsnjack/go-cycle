@@ -101,6 +101,13 @@ const mutations = {
                 state.race.maxSpeed = state.race.speed;
             }
             state.race.distance += real.toMS(state.race.speed) * data.time / 1000;
+            let point = {
+                time: new Date().toISOString(),
+                distance: state.race.distance,
+                hr: state.race.currentBPM,
+            };
+            localStorage.setItem("trkpt_" + state.race.points, JSON.stringify(point));
+            state.race.points++;
         }
         let finished = performance.now();
         console.debug(
