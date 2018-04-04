@@ -1,17 +1,7 @@
 
 const getters = {
-    distance(state) {
-        // Current distance in meters
-        let value = state.race.distance;
-        value = Math.round(value);
-        return value;
-    },
-    distanceLeft(state, getters) {
-        // Distance left in meters
-        return Math.round(state.race.totalDistance - getters.distance) || 0;
-    },
-    routeProgress(state, getters) {
-        return Math.round(getters.distance/state.race.totalDistance * 100 * 100) / 100 || 0;
+    routeProgress(state) {
+        return Math.round(state.race.distance/state.race.totalDistance * 100 * 100) / 100 || 0;
     },
     isRaceFinished(state) {
         return state.race.startedAt && state.race.finishedAt;

@@ -81,17 +81,14 @@ export default {
         ...vuex.mapState([
             "race"
         ]),
-        ...vuex.mapGetters([
-            "distance",
-        ]),
         getDistance: function () {
-            if (this.distance < 1000) {
-                return this.distance;
+            if (this.race.distance < 1000) {
+                return Math.round(this.race.distance);
             }
-            return Math.round(this.distance / 1000 * 10) / 10;
+            return Math.round(this.race.distance / 1000 * 10) / 10;
         },
         getDistanceUnit: function () {
-            if (this.distance < 1000) {
+            if (this.race.distance < 1000) {
                 return "m";
             }
             return "km"

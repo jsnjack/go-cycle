@@ -27,11 +27,13 @@ export default {
             "race",
         ]),
         ...vuex.mapGetters([
-            "distanceLeft",
             "isRaceFinished"
         ]),
         collingDownTime: function () {
             return formatTime(this.now - this.race.finishedAt);
+        },
+        distanceLeft: function () {
+            return Math.round(this.race.totalDistance - this.race.distance) || 0;
         }
     },
     methods: {

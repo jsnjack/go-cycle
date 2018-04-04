@@ -101,6 +101,7 @@ const mutations = {
                 state.race.maxSpeed = state.race.speed;
             }
             state.race.distance += real.toMS(state.race.speed) * data.time / 1000;
+            state.race.opponents[0].distance = state.race.distance;
             let point = {
                 time: new Date().toISOString(),
                 distance: state.race.distance,
@@ -108,6 +109,9 @@ const mutations = {
             };
             localStorage.setItem("trkpt_" + state.race.points, JSON.stringify(point));
             state.race.points++;
+            if (state.race.distance > state.race.totalDistance) {
+                this.commit("FINISH_RACE");
+            }
         }
         let finished = performance.now();
         console.debug(
