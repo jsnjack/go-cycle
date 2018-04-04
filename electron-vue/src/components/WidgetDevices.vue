@@ -35,6 +35,14 @@
             </tr>
             <tr>
                 <td>
+                    <MountainIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ getGrade }} <span class="unit">%</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <CaloriesIcon class="icon"/>
                 </td>
                 <td class="measurement">
@@ -55,6 +63,7 @@
 <script>
 import vuex from "vuex";
 import HRIcon from '../assets/hr-connected.svg';
+import MountainIcon from '../assets/mountain.svg';
 import DistanceIcon from '../assets/distance.svg';
 import SpeedIcon from '../assets/speed-meter.svg';
 import CaloriesIcon from '../assets/fire.svg';
@@ -68,7 +77,7 @@ export default {
     name: 'WidgetDevices',
 
     components: {
-        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon, PowerIcon
+        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon, PowerIcon, MountainIcon
     },
 
     mounted () {
@@ -108,6 +117,9 @@ export default {
         getPower: function () {
             let power = trainer.getYfromX(this.race.csc.speed);
             return Math.round(power);
+        },
+        getGrade: function () {
+            return Math.round(this.race.grade * 100 * 10) / 10 || 0.0;
         },
     },
     data () {

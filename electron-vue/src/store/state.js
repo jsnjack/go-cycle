@@ -31,6 +31,7 @@ const state = {
         // Current values
         speed: 0,
         distance: 0,
+        grade: 0,
 
         videoFile: null,
         gpxData: [],

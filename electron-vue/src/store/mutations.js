@@ -96,6 +96,7 @@ const mutations = {
                     break;
                 }
             }
+            state.race.grade = grade;
             state.race.speed = real.getRealSpeed(state.race.csc.speed, grade, state.user.weight);
             if (state.race.speed > state.race.maxSpeed) {
                 state.race.maxSpeed = state.race.speed;
