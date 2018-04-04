@@ -16,7 +16,7 @@
             </tr>
             <tr>
                 <td>Max speed</td>
-                <td>{{ race.maxSpeed }} km/h</td>
+                <td>{{ maxSpeed }} km/h</td>
             </tr>
             <tr>
                 <td>Calories</td>
@@ -51,6 +51,9 @@ export default {
         averageSpeed: function () {
             let avg = Math.round(this.race.distance / (this.race.finishedAt - this.race.startedAt) * 3.6 * 1000 * 10) / 10 || 0;
             return avg;
+        },
+        maxSpeed: function () {
+            return Math.round(this.race.maxSpeed * 10) / 10 || 0;
         },
         totalDistance: function () {
             // Total distance in km
