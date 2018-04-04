@@ -103,7 +103,9 @@ const mutations = {
             state.race.distance += real.toMS(state.race.speed) * data.time / 1000;
         }
         let finished = performance.now();
-        console.debug(`CSC data: took ${finished - started}, grade, ${grade}, speed ${state.race.speed} (${state.race.csc.speed})`);
+        console.debug(
+            `CSC data: took ${finished - started}, grade, ${grade}, speed ${state.race.speed} (${state.race.csc.speed})`
+        );
     },
     VIDEOFILE_URL(state, urlObj) {
         state.race.videoFile = urlObj;

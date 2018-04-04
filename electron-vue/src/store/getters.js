@@ -1,8 +1,5 @@
 
 const getters = {
-    currentSpeed(state) {
-        return state.race.speed || 0;
-    },
     distance(state) {
         // Current distance in meters
         let value = state.race.distance;

@@ -82,7 +82,6 @@ export default {
             "race"
         ]),
         ...vuex.mapGetters([
-            "currentSpeed",
             "distance",
         ]),
         getDistance: function () {
