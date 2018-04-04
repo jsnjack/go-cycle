@@ -45,6 +45,9 @@ export default {
             "race",
             "user"
         ]),
+        ...vuex.mapGetters([
+            "calories",
+        ]),
         duration: function () {
             return formatTime(this.race.finishedAt - this.race.startedAt);
         },
@@ -63,7 +66,7 @@ export default {
             return !!this.user.stravaAccessToken;
         },
         calories: function () {
-            return Math.round(this.race.calories);
+            return Math.round(this.calories);
         }
     },
     methods: {

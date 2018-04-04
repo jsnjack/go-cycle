@@ -70,7 +70,6 @@ import CaloriesIcon from '../assets/fire.svg';
 import TimeIcon from '../assets/time.svg';
 import PowerIcon from '../assets/power.svg';
 import {formatTime} from "../utils/time";
-import trainer from "../trainers/cycleops_fluid";
 
 
 export default {
@@ -90,6 +89,9 @@ export default {
         ...vuex.mapState([
             "race"
         ]),
+        ...vuex.mapGetters([
+            "calories"
+        ]),
         getDistance: function () {
             if (this.race.distance < 1000) {
                 return Math.round(this.race.distance);
@@ -103,7 +105,7 @@ export default {
             return "km"
         },
         getCalories: function () {
-            return Math.round(this.race.calories);
+            return Math.round(this.calories);
         },
         getRaceDuration: function () {
             if (this.race.startedAt) {
@@ -115,8 +117,7 @@ export default {
             return this.race.speed.toFixed(1);
         },
         getPower: function () {
-            let power = trainer.getYfromX(this.race.csc.speed);
-            return Math.round(power);
+            return Math.round(this.race.currentPower);
         },
         getGrade: function () {
             return Math.round(this.race.grade * 100 * 10) / 10 || 0.0;

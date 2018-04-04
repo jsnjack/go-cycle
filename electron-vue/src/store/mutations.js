@@ -6,6 +6,7 @@ let defaultAvailableDevice = {
 
 import utils from "../utils/gpx";
 import real from "../utils/real";
+import trainer from "../trainers/cycleops_fluid";
 
 
 const mutations = {
@@ -85,9 +86,10 @@ const mutations = {
         }
         state.race.csc.distance = data.revolutions * state.user.wheelSize / 1000;
         state.race.csc.speed = state.race.csc.distance / (data.time / 1000);
+        state.race.currentPower = trainer.getYfromX(state.race.csc.speed);
         if (state.race.startedAt && !state.race.finishedAt) {
             // Race is in progress
-            state.race.csc.point++;
+            state.race.csc.points++;
             let estDistance = state.race.distance + state.race.csc.distance;
             for (let i=state.race.currentGPXID; i<state.race.gpxData.length - 1; i++) {
                 state.race.currentGPXID = i;
@@ -110,6 +112,7 @@ const mutations = {
             };
             localStorage.setItem("trkpt_" + state.race.points, JSON.stringify(point));
             state.race.points++;
+            state.race.avgPower = (state.race.avgPower * (state.race.points - 1) + state.race.currentPower) / state.race.points;
             if (state.race.distance > state.race.totalDistance) {
                 this.commit("FINISH_RACE");
             }

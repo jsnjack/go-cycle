@@ -42,7 +42,9 @@ const state = {
         }],
 
         currentBPM: 0,
-        energy: 0, // J
+        currentPower: 0,
+
+        avgPower: 0,
 
         startedAt: null,
         finishedAt: null,
