@@ -113,6 +113,9 @@ const mutations = {
             localStorage.setItem("trkpt_" + state.race.points, JSON.stringify(point));
             state.race.points++;
             state.race.avgPower = (state.race.avgPower * (state.race.points - 1) + state.race.currentPower) / state.race.points;
+            let timestamp = new Date();
+            let e = state.race.avgPower * (timestamp.getTime() - state.race.startedAt.getTime()) / 1000;
+            state.race.calories = e / 4.184 / 1000;
             if (state.race.distance > state.race.totalDistance) {
                 this.commit("FINISH_RACE");
             }
@@ -144,6 +147,14 @@ const mutations = {
         state.race.csc.time = 0;
         state.race.csc.revolutions = 0;
         state.race.csc.points = 0;
+        state.race.avgPower = 0;
+        state.race.calories = 0;
+        state.race.currentGPXID = 0;
+        state.race.distance = 0;
+        state.race.speed = 0;
+        state.race.grade = 0;
+        state.race.points = 0;
+        state.race.maxSpeed = 0;
         localStorage.clear();
     },
     FINISH_RACE(state) {

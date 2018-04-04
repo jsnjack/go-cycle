@@ -45,6 +45,7 @@ const state = {
         currentPower: 0,
 
         avgPower: 0,
+        calories: 0,
 
         startedAt: null,
         finishedAt: null,

@@ -89,9 +89,6 @@ export default {
         ...vuex.mapState([
             "race"
         ]),
-        ...vuex.mapGetters([
-            "calories"
-        ]),
         getDistance: function () {
             if (this.race.distance < 1000) {
                 return Math.round(this.race.distance);
@@ -105,7 +102,7 @@ export default {
             return "km"
         },
         getCalories: function () {
-            return Math.round(this.calories);
+            return Math.round(this.race.calories);
         },
         getRaceDuration: function () {
             if (this.race.startedAt) {
