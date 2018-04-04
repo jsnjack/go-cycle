@@ -1,4 +1,5 @@
 const R = 6371000;
+const gradeSampleLength = 50; // m
 
 /* eslint-disable max-len */
 // A template for creating a gpx file
@@ -117,6 +118,9 @@ function getCoordinatesFromDistance(distance, gpxData, offset) {
 function extractDataFromGPX(doc) {
     let started = performance.now();
     let distance = 0;
+    let gradeDistance = 0;
+    let _gradeArray = [];
+    let grade = 0;
     let points = doc.getElementsByTagName("trkpt");
     let container = new Array(points.length);
     let baseTime;
@@ -125,6 +129,7 @@ function extractDataFromGPX(doc) {
     }
     container[0] = {
         distance: 0,
+        grade: 0,
         elevation: parseFloat(points[0].getElementsByTagName("ele")[0].textContent),
         lat: parseFloat(points[0].getAttribute("lat")),
         lon: parseFloat(points[0].getAttribute("lon")),
@@ -133,17 +138,27 @@ function extractDataFromGPX(doc) {
         container[0].time = 0;
     }
     for (let i=0; i<points.length - 1; i++) {
-        distance += utils.getDistance(
+        let fragment = utils.getDistance(
             points[i].getAttribute("lat"),
             points[i].getAttribute("lon"),
             points[i+1].getAttribute("lat"),
             points[i+1].getAttribute("lon")
         );
+        distance += fragment;
+        gradeDistance += fragment;
+        let ele = parseFloat(points[i+1].getElementsByTagName("ele")[0].textContent);
+        _gradeArray.push(ele);
+        if (gradeDistance > gradeSampleLength) {
+            grade = getGrade(_gradeArray, gradeDistance);
+            _gradeArray = [];
+            gradeDistance = 0;
+        }
         container[i+1] = {
             distance: distance,
             lat: parseFloat(points[i+1].getAttribute("lat")),
             lon: parseFloat(points[i+1].getAttribute("lon")),
-            elevation: parseFloat(points[i+1].getElementsByTagName("ele")[0].textContent),
+            elevation: ele,
+            grade: grade,
         };
         if (baseTime) {
             container[i+1].time = new Date(
@@ -156,8 +171,15 @@ function extractDataFromGPX(doc) {
     return container;
 }
 
+// Calculate grade
+function getGrade(elevationArray, distance) {
+    let grade = (elevationArray[elevationArray.length - 1] - elevationArray[0]) / distance;
+    return grade;
+}
+
+
 const utils = {
-    readBlob, getDistance, createGPX, extractDataFromGPX,
+    readBlob, getDistance, createGPX, extractDataFromGPX, getGrade,
 };
 
 export default utils;
