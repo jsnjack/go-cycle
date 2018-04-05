@@ -27,18 +27,18 @@
             </tr>
             <tr>
                 <td>
-                    <PowerIcon class="icon"/>
-                </td>
-                <td class="measurement">
-                    {{ getPower }} <span class="unit">W</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
                     <MountainIcon class="icon"/>
                 </td>
                 <td class="measurement">
                     {{ getGrade }} <span class="unit">%</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <PowerIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ getPower }} <span class="unit">W</span>
                 </td>
             </tr>
             <tr>
