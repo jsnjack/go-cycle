@@ -5,7 +5,7 @@
             <div class="section">
                 <h2>Personal info</h2>
                 <div class="row">
-                    <div class="info">Weight, kg</div>
+                    <div class="info">Weight (rider + bike + equipment), kg</div>
                     <input type="number" :value="user.weight" @input="updateWeight"/>
                 </div>
                 <div class="row">

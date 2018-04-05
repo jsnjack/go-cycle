@@ -17,7 +17,7 @@ const state = {
         },
     },
     user: {
-        weight: 65, // kg
+        weight: 78, // kg
         wheelSize: "2136", // mm
         stravaAccessToken: window.process.env.GO_CYCLE_STRAVA_TOKEN,
         warmUpDuration: 5 * 60, // s
