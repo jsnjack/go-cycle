@@ -89,6 +89,9 @@ export default {
         ...vuex.mapState([
             "race"
         ]),
+        ...vuex.mapGetters([
+            "isRaceInProgress"
+        ]),
         getDistance: function () {
             if (this.race.distance < 1000) {
                 return Math.round(this.race.distance);
@@ -111,7 +114,10 @@ export default {
             return 0;
         },
         getCurrentSpeed: function () {
-            return this.race.speed.toFixed(1);
+            if(this.isRaceInProgress) {
+                return this.race.speed.toFixed(1);
+            }
+            return this.race.csc.speed.toFixed(1);
         },
         getPower: function () {
             return Math.round(this.race.currentPower);
