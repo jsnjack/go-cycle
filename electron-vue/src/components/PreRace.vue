@@ -9,13 +9,6 @@
                     <input type="number" :value="user.weight" @input="updateWeight"/>
                 </div>
                 <div class="row">
-                    <div class="info">Gender</div>
-                    <select v-model="user.gender" @input="updateGender">
-                        <option value="f">Female</option>
-                        <option value="m">Male</option>
-                    </select>
-                </div>
-                <div class="row">
                     <div class="info">Age</div>
                     <input type="number" :value="user.age" @input="updateAge"/>
                 </div>
@@ -109,9 +102,6 @@
             },
             updateWarmUpDuration(event) {
                 this.$store.commit("UPDATE_WARM_UP_DURATION", event.target.value);
-            },
-            updateGender(event) {
-                this.$store.commit("UPDATE_USER_GENDER", event.target.value);
             },
             updateAge(event) {
                 this.$store.commit("UPDATE_USER_AGE", event.target.value);

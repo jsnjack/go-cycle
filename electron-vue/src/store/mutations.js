@@ -166,9 +166,6 @@ const mutations = {
     UPDATE_WARM_UP_DURATION(state, value) {
         state.user.warmUpDuration = parseInt(value, 10);
     },
-    UPDATE_USER_GENDER(state, value) {
-        state.user.gender = value;
-    },
     UPDATE_USER_AGE(state, value) {
         state.user.age = parseInt(value, 10);
     },
