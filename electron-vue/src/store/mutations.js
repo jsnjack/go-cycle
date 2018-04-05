@@ -109,6 +109,7 @@ const mutations = {
                 time: new Date().toISOString(),
                 distance: state.race.distance,
                 hr: state.race.currentBPM,
+                power: state.race.currentPower,
             };
             localStorage.setItem("trkpt_" + state.race.points, JSON.stringify(point));
             state.race.points++;

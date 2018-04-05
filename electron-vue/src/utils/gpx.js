@@ -84,7 +84,13 @@ function createGPX(points, startedAt, gpxData) {
                 hr.textContent = dataObj.hr;
                 extensions.appendChild(hr);
             }
+
+            let power = doc.createElement("power");
+            power.textContent = dataObj.power;
+            extensions.appendChild(power);
+
             extensions.appendChild(distance);
+
             trkpt.appendChild(time);
             trkpt.appendChild(extensions);
             trkseg.appendChild(trkpt);
