@@ -18,8 +18,6 @@ const state = {
     },
     user: {
         weight: 65, // kg
-        gender: "m", // male
-        age: 30,
         wheelSize: "2136", // mm
         stravaAccessToken: window.process.env.GO_CYCLE_STRAVA_TOKEN,
         warmUpDuration: 5 * 60, // s

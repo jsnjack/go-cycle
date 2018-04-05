@@ -9,10 +9,6 @@
                     <input type="number" :value="user.weight" @input="updateWeight"/>
                 </div>
                 <div class="row">
-                    <div class="info">Age</div>
-                    <input type="number" :value="user.age" @input="updateAge"/>
-                </div>
-                <div class="row">
                     <div class="info">Tyre Size</div>
                     <!-- https://www.cateye.com/data/resources/Tire_size_chart_ENG.pdf -->
                     <select v-model="user.wheelSize" @input="updateWheelSize">
@@ -102,9 +98,6 @@
             },
             updateWarmUpDuration(event) {
                 this.$store.commit("UPDATE_WARM_UP_DURATION", event.target.value);
-            },
-            updateAge(event) {
-                this.$store.commit("UPDATE_USER_AGE", event.target.value);
             },
             updateWheelSize(event) {
                 this.$store.commit("UPDATE_USER_WHEEL_SIZE", event.target.value);
