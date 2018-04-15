@@ -1,7 +1,7 @@
 <template>
     <div id="widget-devices">
         <table>
-            <tr>
+            <tr v-show="devices.hr.id">
                 <td>
                     <HRIcon class="icon"/>
                 </td>
@@ -87,7 +87,8 @@ export default {
 
     computed: {
         ...vuex.mapState([
-            "race"
+            "race",
+            "devices"
         ]),
         ...vuex.mapGetters([
             "isRaceInProgress"
