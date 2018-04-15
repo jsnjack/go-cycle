@@ -34,7 +34,11 @@ function getRealSpeed(speedFromSensor, grade, mass) {
     let bb = 0;
     let cc = fRolling(grade, mass) + fGravity(grade, mass);
     let dd = -fakePower;
-    let roots = solveCubic(aa, bb, cc, dd);
+    let roots = [0];
+    try {
+        roots = solveCubic(aa, bb, cc, dd);
+    } catch (e) {
+    };
     realSpeed = toKMH(getMinPositive(roots));
     return realSpeed;
 }
