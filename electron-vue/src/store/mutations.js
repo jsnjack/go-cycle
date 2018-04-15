@@ -84,8 +84,8 @@ const mutations = {
         if (!state.devices.csc.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
-        state.race.csc.distance = data.revolutions * state.user.wheelSize / 1000;
-        state.race.csc.speed = state.race.csc.distance / (data.time / 1000);
+        state.race.csc.distance = data.revolutions * state.user.wheelSize / 1000 || 0;
+        state.race.csc.speed = state.race.csc.distance / (data.time / 1000) || 0;
         state.race.currentPower = trainer.getYfromX(state.race.csc.speed);
         if (state.race.startedAt && !state.race.finishedAt) {
             // Race is in progress
