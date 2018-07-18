@@ -11,8 +11,9 @@
                     height="100%">
                 </video>
                 <WidgetDevices/>
-                <WidgetProgress/>
+                <WidgetProgress v-if="race.gpxData.length === 0"/>
                 <WidgetFinish/>
+                <WidgetElevation v-if="race.gpxData.length > 0"/>
                 <WidgetOpponents/>
                 <WidgetWarmup/>
             </div>
@@ -24,6 +25,7 @@ import vuex from "vuex";
 import WidgetDevices from './WidgetDevices';
 import WidgetProgress from './WidgetProgress';
 import WidgetFinish from './WidgetFinish';
+import WidgetElevation from './WidgetElevation';
 import WidgetOpponents from './WidgetOpponents';
 import WidgetWarmup from './WidgetWarmup';
 
@@ -31,7 +33,8 @@ export default {
     name: 'Race',
 
     components: {
-        WidgetDevices, WidgetProgress, WidgetFinish, WidgetOpponents, WidgetWarmup,
+        WidgetDevices, WidgetProgress, WidgetFinish, WidgetElevation, WidgetWarmup,
+        WidgetOpponents,
     },
 
     computed: {
