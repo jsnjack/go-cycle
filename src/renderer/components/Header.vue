@@ -54,8 +54,7 @@ export default {
     top: 0;
     left: 0;
     text-align: right;
-    background: rgb(36, 36, 36);
-    opacity: 0.2;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
 }
 .icon {
     height: 1.2rem;
