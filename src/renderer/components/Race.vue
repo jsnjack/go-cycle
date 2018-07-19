@@ -63,4 +63,10 @@ export default {
         background: url("../assets/background.jpg") center;
         background-size: cover;
     }
+    .video-container video {
+        position: fixed;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+    }
 </style>
