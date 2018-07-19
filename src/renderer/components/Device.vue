@@ -56,7 +56,8 @@ export default {
     height: 10rem;
     margin: 3em;
     padding: 1em;
-    background: linear-gradient(rgba(0, 0, 0, 0.1));
+    background: rgb(36, 36, 36);
+    opacity: 0.1;
 }
 .device.connected::after{
     position: absolute;
