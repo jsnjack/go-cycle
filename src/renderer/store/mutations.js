@@ -88,7 +88,11 @@ const mutations = {
         state.race.csc.speed = real.toKMH(
             state.race.csc.distance / (data.time / 1000) || 0
         );
-        state.race.currentPower = trainer.getYfromX(state.race.csc.speed);
+        try {
+            state.race.currentPower = trainer.getYfromX(state.race.csc.speed);
+        } catch (e) {
+            state.race.currentPower = 0;
+        }
         if (state.race.startedAt && !state.race.finishedAt) {
             // Race is in progress
             state.race.csc.points++;
