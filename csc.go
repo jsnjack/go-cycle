@@ -127,7 +127,7 @@ func SendSynthCSCEvent() {
 	msgCSC := CSCMessage{
 		ID:           "fake-csc",
 		RecognizedAs: "csc",
-		Revolutions:  uint32(Random(8, 11)),
+		Revolutions:  uint32(Random(4, 6)),
 		Time:         1000,
 	}
 	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
