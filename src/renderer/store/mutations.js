@@ -162,7 +162,16 @@ const mutations = {
         let data = utils.extractDataFromGPX(doc);
         state.race.totalDistance = data[data.length - 1].distance;
         if (data[0].time === 0) {
-            state.race.opponents.push({name: "Joe", distance: 0});
+            let hasOpponent = false;
+            for (let i=0; state.race.opponents.length -1; i++) {
+                if (state.race.opponents[i].name === "Joe") {
+                    hasOpponent = true;
+                    state.race.opponents[i].distance = 0;
+                }
+            }
+            if (!hasOpponent) {
+                state.race.opponents.push({name: "Joe", distance: 0});
+            }
         }
         state.race.gpxData = data;
     },
