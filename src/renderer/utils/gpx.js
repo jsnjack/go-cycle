@@ -1,5 +1,7 @@
 const R = 6371000;
-const gradeSampleLength = 50; // m
+// Check Exponential Moving Average https://docs.oracle.com/cd/E57185_01/IRWUG/ch12s07s05.html
+const SampleWindow = 3;
+const SmoothingConstant = 2 / (1 + SampleWindow);
 
 /* eslint-disable max-len */
 // A template for creating a gpx file
@@ -123,9 +125,6 @@ function getCoordinatesFromDistance(distance, gpxData, offset) {
 function extractDataFromGPX(doc) {
     let started = performance.now();
     let distance = 0;
-    let gradeDistance = 0;
-    let _gradeArray = [];
-    let grade = 0;
     let points = doc.getElementsByTagName("trkpt");
     let container = new Array(points.length);
     let baseTime;
@@ -150,20 +149,13 @@ function extractDataFromGPX(doc) {
             points[i+1].getAttribute("lon")
         );
         distance += fragment;
-        gradeDistance += fragment;
         let ele = parseFloat(points[i+1].getElementsByTagName("ele")[0].textContent);
-        _gradeArray.push(ele);
-        if (gradeDistance > gradeSampleLength) {
-            grade = getGrade(_gradeArray, gradeDistance);
-            _gradeArray = [];
-            gradeDistance = 0;
-        }
         container[i+1] = {
             distance: distance,
             lat: parseFloat(points[i+1].getAttribute("lat")),
             lon: parseFloat(points[i+1].getAttribute("lon")),
             elevation: ele,
-            grade: grade,
+            grade: 0,
         };
         if (baseTime) {
             container[i+1].time = new Date(
@@ -171,20 +163,35 @@ function extractDataFromGPX(doc) {
             ).getTime() - baseTime;
         }
     }
+    container = calculateGrade(smoothElevation(container));
     let finished = performance.now();
     console.debug("Extracting data from GPX took, ms:", finished - started);
+    for (let i=1; i<container.length - 1; i++) {
+        console.log(`G ${container[i].grade}: G ${container[i-1].elevation} ${container[i].elevation}`);
+    }
+    return container;
+}
+
+// Smootherns elevation data
+function smoothElevation(container) {
+    for (let i=1; i<container.length - 1; i++) {
+        let prevEMA = container[i-1].elevation;
+        container[i].elevation = (SmoothingConstant * (container[i].elevation - prevEMA)) + prevEMA;
+    }
     return container;
 }
 
 // Calculate grade
-function getGrade(elevationArray, distance) {
-    let grade = (elevationArray[elevationArray.length - 1] - elevationArray[0]) / distance;
-    return grade;
+function calculateGrade(container) {
+    for (let i=1; i<container.length - 1; i++) {
+        let fragment = container[i].distance - container[i-1].distance;
+        container[i].grade = (container[i].elevation - container[i-1].elevation) / fragment;
+    }
+    return container;
 }
 
-
 const utils = {
-    readBlob, getDistance, createGPX, extractDataFromGPX, getGrade,
+    readBlob, getDistance, createGPX, extractDataFromGPX,
 };
 
 export default utils;
