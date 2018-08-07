@@ -166,9 +166,6 @@ function extractDataFromGPX(doc) {
     container = calculateGrade(smoothElevation(container));
     let finished = performance.now();
     console.debug("Extracting data from GPX took, ms:", finished - started);
-    for (let i=1; i<container.length - 1; i++) {
-        console.log(`G ${container[i].grade}: G ${container[i-1].elevation} ${container[i].elevation}`);
-    }
     return container;
 }
 
