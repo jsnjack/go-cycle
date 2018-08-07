@@ -150,7 +150,7 @@ const mutations = {
         }
         let finished = performance.now();
         console.debug(
-            `CSC data: took ${finished - started}, grade, ${grade}, speed ${
+            `CSC data: took ${finished - started}, distance ${state.race.distance}, grade ${grade}, speed ${
                 state.race.speed
             } (${state.race.csc.speed})`
         );
