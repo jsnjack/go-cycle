@@ -65,7 +65,7 @@ export default {
             .x((d) => xScale(d.distance))
             .y0(yScale(d3.min(this.race.gpxData, (d) => d.elevation)))
             .y1((d) => yScale(d.elevation))
-            .curve(d3.curveBasis);
+            .curve(d3.curveLinear);
 
         const line = d3
             .line()
@@ -75,7 +75,7 @@ export default {
             .y(function(d) {
                 return yScale(d.elevation);
             })
-            .curve(d3.curveBasis);
+            .curve(d3.curveLinear);
 
         // Area chart
         g
