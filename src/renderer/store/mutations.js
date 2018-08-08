@@ -80,6 +80,7 @@ const mutations = {
     MEASUREMENT_CSC(state, data) {
         let started = performance.now();
         let grade = 0;
+        let toLog = {};
         if (!state.devices.csc.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
@@ -104,6 +105,8 @@ const mutations = {
             ) {
                 state.race.currentGPXID = i;
                 grade = state.race.gpxData[i].grade;
+                toLog.grade = state.race.gpxData[i].grade;
+                toLog.ele = state.race.gpxData[i].elevation;
                 if (
                     state.race.gpxData[i].distance <= estDistance &&
                     state.race.gpxData[i + 1].distance > estDistance
@@ -117,12 +120,15 @@ const mutations = {
                 grade,
                 state.user.weight
             );
+            toLog.speed = state.race.speed;
+            toLog.CSCSpeed = state.race.csc.speed;
             if (state.race.speed > state.race.maxSpeed) {
                 state.race.maxSpeed = state.race.speed;
             }
             state.race.distance +=
                 (real.toMS(state.race.speed) * data.time) / 1000;
             state.race.opponents[0].distance = state.race.distance;
+            toLog.distance = state.race.distance;
             let point = {
                 time: new Date().toISOString(),
                 distance: state.race.distance,
@@ -150,9 +156,7 @@ const mutations = {
         }
         let finished = performance.now();
         console.debug(
-            `CSC data: took ${finished - started}, distance ${state.race.distance}, grade ${grade}, speed ${
-                state.race.speed
-            } (${state.race.csc.speed})`
+            `CSC data: took ${finished - started}`, toLog
         );
     },
     VIDEOFILE_URL(state, urlObj) {
