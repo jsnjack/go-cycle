@@ -8,13 +8,11 @@ const del = require("del");
 const packager = require("electron-packager");
 const webpack = require("webpack");
 const Multispinner = require("multispinner");
-const installer = require("electron-installer-redhat");
 
 const buildConfig = require("./build.config");
 const mainConfig = require("./webpack.main.config");
 const rendererConfig = require("./webpack.renderer.config");
 const webConfig = require("./webpack.web.config");
-const rpmConfig = require("./rpm");
 
 const doneLog = chalk.bgGreen.white(" DONE ") + " ";
 const errorLog = chalk.bgRed.white(" ERROR ") + " ";
@@ -116,7 +114,6 @@ function bundleApp() {
             );
             console.log(err + "\n");
         } else {
-            rpm();
             console.log(`\n${doneLog}\n`);
         }
     });
@@ -154,17 +151,4 @@ function greeting() {
         });
     } else console.log(chalk.yellow.bold("\n  lets-build"));
     console.log();
-}
-
-function rpm() {
-    console.log("Creating rpm package...", rpmConfig.version);
-
-    installer(rpmConfig, function(err) {
-        if (err) {
-            console.error(err, err.stack);
-            process.exit(1);
-        }
-
-        console.log("Successfully created package at " + rpmConfig.dest);
-    });
 }
