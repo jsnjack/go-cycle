@@ -23,7 +23,7 @@ export default {
             return this.race.opponents[0].distance;
         },
         distanceOpponent: function() {
-            return this.race.opponents[1].distance;
+            return this.race.opponents[1] ? this.race.opponents[1].distance: 0;
         },
     },
 
@@ -100,12 +100,14 @@ export default {
             .attr("fill", yourColor)
             .attr("transform", "translate(0,0)");
 
-        markerOpponent = svg
-            .append("circle")
-            .attr("id", "marker-opponent")
-            .attr("r", 5)
-            .attr("fill", opponentColor)
-            .attr("transform", "translate(0,0)");
+        if (this.race.opponents.length > 1) {
+            markerOpponent = svg
+                .append("circle")
+                .attr("id", "marker-opponent")
+                .attr("r", 5)
+                .attr("fill", opponentColor)
+                .attr("transform", "translate(0,0)");
+        }
     },
     watch: {
         distanceYou: function(val) {
