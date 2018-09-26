@@ -75,7 +75,22 @@ const mutations = {
         if (!state.devices.hr.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
+        let energyPerMin;
+        let now = new Date().getTime();
+        let period = now - state.race.lastHREvent; // ms
         state.race.currentBPM = data.bpm;
+        // https://community.fitbit.com/t5/Charge-HR/How-Charge-HR-calculates-calories-burned/td-p/1021859
+        if (state.race.lastHREvent !== 0 && state.race.startedAt && !state.race.finishedAt) {
+            /* eslint-disable max-len */
+            if (state.user.gender == "m") {
+                energyPerMin = -55.0969 + 0.6309 * state.race.currentBPM + 0.1988 * state.user.weight + 0.2017 * state.user.age;
+            } else {
+                energyPerMin = -20.4022 + 0.4472 * state.race.currentBPM - 0.1263 * state.user.weight + 0.074 * state.user.age;
+            }
+            /* eslint-enable max-len */
+            state.race.calories += energyPerMin * 0.23 / 1000 / 60 * period; // kCal
+        }
+        state.race.lastHREvent = now;
     },
     MEASUREMENT_CSC(state, data) {
         let started = performance.now();
@@ -140,16 +155,6 @@ const mutations = {
                 JSON.stringify(point)
             );
             state.race.points++;
-            state.race.avgPower =
-                (state.race.avgPower * (state.race.points - 1) +
-                    state.race.currentPower) /
-                state.race.points;
-            let timestamp = new Date();
-            let e =
-                (state.race.avgPower *
-                    (timestamp.getTime() - state.race.startedAt.getTime())) /
-                1000;
-            state.race.calories = e / 4.184 / 1000;
             if (state.race.distance > state.race.totalDistance) {
                 this.commit("FINISH_RACE");
             }
@@ -184,14 +189,15 @@ const mutations = {
         state.race.finishedAt = null;
     },
     START_RACE(state) {
+        state.race.currentPower = 0;
         state.race.currentBPM = 0;
         state.race.startedAt = new Date();
         state.race.finishedAt = null;
         state.race.csc.time = 0;
         state.race.csc.revolutions = 0;
         state.race.csc.points = 0;
-        state.race.avgPower = 0;
         state.race.calories = 0;
+        state.race.lastHREvent = 0;
         state.race.currentGPXID = 0;
         state.race.distance = 0;
         state.race.speed = 0;
@@ -205,6 +211,12 @@ const mutations = {
     },
     UPDATE_USER_WEIGHT(state, value) {
         state.user.weight = parseInt(value, 10);
+    },
+    UPDATE_USER_GENDER(state, value) {
+        state.user.gender = value;
+    },
+    UPDATE_USER_AGE(state, value) {
+        state.user.age = parseInt(value, 10);
     },
     UPDATE_WARM_UP_DURATION(state, value) {
         state.user.warmUpDuration = parseInt(value, 10);

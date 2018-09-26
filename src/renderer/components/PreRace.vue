@@ -9,6 +9,17 @@
                     <input type="number" :value="user.weight" @input="updateWeight"/>
                 </div>
                 <div class="row">
+                    <div class="info">Gender</div>
+                    <select v-model="user.gender" @input="updateGender">
+                        <option value="f">Female</option>
+                        <option value="m">Male</option>
+                    </select>
+                </div>
+               <div class="row">
+                    <div class="info">Age</div>
+                    <input type="number" :value="user.age" @input="updateAge"/>
+                </div>
+                <div class="row">
                     <div class="info">Tyre Size</div>
                     <!-- https://www.cateye.com/data/resources/Tire_size_chart_ENG.pdf -->
                     <select v-model="user.wheelSize" @input="updateWheelSize">
@@ -100,6 +111,12 @@ export default {
         },
         updateWheelSize(event) {
             this.$store.commit("UPDATE_USER_WHEEL_SIZE", event.target.value);
+        },
+        updateAge(event) {
+            this.$store.commit("UPDATE_USER_AGE", event.target.value);
+        },
+        updateGender(event) {
+            this.$store.commit("UPDATE_USER_GENDER", event.target.value);
         },
     },
 };
