@@ -35,6 +35,7 @@ import vuex from "vuex";
 import {formatTime} from "../utils/time";
 import utils from "../utils/gpx";
 
+let fs = require("fs");
 const stravaUploadURL = "https://www.strava.com/api/v3/uploads";
 
 export default {
@@ -74,6 +75,16 @@ export default {
         onUpload: function() {
             let gpxData = utils.createGPX(this.race.points, this.race.startedAt.toISOString(), this.race.gpxData);
             let formData = new FormData();
+            let filePath = new Date().getTime() + ".gpx";
+
+            fs.writeFile(filePath, gpxData, "utf8", (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(`File ${filePath} created`);
+            });
+
             formData.append("activity_type", "virtualride");
             formData.append("file", new File([gpxData], "activity.gpx", {type: "text/xml"}));
             formData.append("data_type", "gpx");
