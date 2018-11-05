@@ -11,13 +11,9 @@
 <script>
 import vuex from "vuex";
 import {formatTime} from "../utils/time";
-import {setTimeout} from "timers";
 
 export default {
     name: "WidgetWarmup",
-    mounted() {
-        this.schedule();
-    },
     computed: {
         ...vuex.mapState(["race", "user"]),
         warmupTimeLeft: function() {
