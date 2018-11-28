@@ -16,8 +16,8 @@ const wsMessageHandler = function(app, data) {
     case "ws.device:measurement":
         if (msg.data.recognizedAs === "hr") {
             app.$store.commit("MEASUREMENT_HR", msg.data);
-        } else if (msg.data.recognizedAs === "csc") {
-            app.$store.commit("MEASUREMENT_CSC", msg.data);
+        } else if (msg.data.recognizedAs === "csc_speed") {
+            app.$store.commit("MEASUREMENT_CSC_SPEED", msg.data);
         } else {
             console.warn("Unrecognized measurement", msg);
         }

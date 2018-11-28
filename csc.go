@@ -70,10 +70,26 @@ func (sensor *CSCSensor) Listen() {
 
 func (sensor *CSCSensor) decode(data []byte) {
 	offset := 1
-
-	revolutions := binary.LittleEndian.Uint32(append([]byte(data[offset:])))
-	offset += 4
-	eventTime := binary.LittleEndian.Uint16(append([]byte(data[offset:])))
+	var revolutions uint32
+	var eventTime uint16
+	var kind string
+	switch data[0] {
+	case 1:
+		// Speed sensor
+		revolutions = binary.LittleEndian.Uint32(append([]byte(data[offset:])))
+		offset += 4
+		eventTime = binary.LittleEndian.Uint16(append([]byte(data[offset:])))
+		kind = "csc_speed"
+		break
+	case 2:
+		// Cadence sensor
+		_revolutions := binary.LittleEndian.Uint16(append([]byte(data[offset:])))
+		revolutions = uint32(_revolutions)
+		offset += 2
+		eventTime = binary.LittleEndian.Uint16(append([]byte(data[offset:])))
+		kind = "csc_cadence"
+		break
+	}
 	cscData := SpeedSensorData{Revolutions: revolutions, EventTime: eventTime}
 	if sensor.hasPrevious() {
 		sensor.Previous = sensor.Current
@@ -89,10 +105,10 @@ func (sensor *CSCSensor) decode(data []byte) {
 	} else {
 		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
 	}
-	Logger.Printf("Rev: %d, Time: %d\n", sensor.Current.Revolutions, time)
+	Logger.Printf("[%s] Rev: %d, Time: %d\n", kind, sensor.Current.Revolutions, time)
 	msgCSC := CSCMessage{
 		ID:           sensor.Peripheral.ID(),
-		RecognizedAs: GetActiveDeviceType(sensor.Peripheral.ID()),
+		RecognizedAs: kind,
 		Revolutions:  sensor.Current.Revolutions - sensor.Previous.Revolutions,
 		Time:         time,
 	}
@@ -124,14 +140,24 @@ func (sensor *CSCSensor) GetPeripheral() gatt.Peripheral {
 
 // SendSynthCSCEvent sends synthetic CSC event
 func SendSynthCSCEvent() {
-	msgCSC := CSCMessage{
-		ID:           "fake-csc",
-		RecognizedAs: "csc",
+	msgSpeed := CSCMessage{
+		ID:           "fake-speed-csc",
+		RecognizedAs: "csc_speed",
 		Revolutions:  uint32(Random(4, 6)),
 		Time:         1000,
 	}
-	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
+	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgSpeed}
 	msgB, _ := json.Marshal(msgWS)
+	BroadcastChannel <- msgB
+
+	msgCadence := CSCMessage{
+		ID:           "fake-cadence-csc",
+		RecognizedAs: "csc_cadence",
+		Revolutions:  uint32(Random(1, 3)),
+		Time:         1000,
+	}
+	msgWS = WSMessage{Type: "ws.device:measurement", Data: msgCadence}
+	msgB, _ = json.Marshal(msgWS)
 	BroadcastChannel <- msgB
 }
 

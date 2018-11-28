@@ -47,9 +47,9 @@ const mutations = {
             state.devices.hr.id = data.id;
             state.devices.hr.connected = true;
             break;
-        case "csc":
-            state.devices.csc.id = data.id;
-            state.devices.csc.connected = true;
+        case "csc_speed":
+            state.devices.csc_speed.id = data.id;
+            state.devices.csc_speed.connected = true;
             break;
         }
     },
@@ -65,9 +65,9 @@ const mutations = {
             state.devices.hr.id = data.id;
             state.devices.hr.connected = false;
             break;
-        case "csc":
-            state.devices.csc.id = data.id;
-            state.devices.csc.connected = false;
+        case "csc_speed":
+            state.devices.csc_speed.id = data.id;
+            state.devices.csc_speed.connected = false;
             break;
         }
     },
@@ -92,27 +92,27 @@ const mutations = {
         }
         state.race.lastHREvent = now;
     },
-    MEASUREMENT_CSC(state, data) {
+    MEASUREMENT_CSC_SPEED(state, data) {
         let started = performance.now();
         let grade = 0;
         let toLog = {};
-        if (!state.devices.csc.connected) {
+        if (!state.devices.csc_speed.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
-        state.race.csc.distance =
+        state.race.csc_speed.distance =
             (data.revolutions * state.user.wheelSize) / 1000 || 0;
-        state.race.csc.speed = real.toKMH(
-            state.race.csc.distance / (data.time / 1000) || 0
+        state.race.csc_speed.speed = real.toKMH(
+            state.race.csc_speed.distance / (data.time / 1000) || 0
         );
         try {
-            state.race.currentPower = trainer.getYfromX(state.race.csc.speed);
+            state.race.currentPower = trainer.getYfromX(state.race.csc_speed.speed);
         } catch (e) {
             state.race.currentPower = 0;
         }
         if (state.race.startedAt && !state.race.finishedAt) {
             // Race is in progress
-            state.race.csc.points++;
-            let estDistance = state.race.distance + state.race.csc.distance;
+            state.race.csc_speed.points++;
+            let estDistance = state.race.distance + state.race.csc_speed.distance;
             for (
                 let i = state.race.currentGPXID;
                 i < state.race.gpxData.length - 1;
@@ -134,12 +134,12 @@ const mutations = {
             }
             state.race.grade = grade;
             state.race.speed = real.getRealSpeed(
-                state.race.csc.speed,
+                state.race.csc_speed.speed,
                 grade,
                 state.user.weight
             );
             toLog.speed = state.race.speed;
-            toLog.CSCSpeed = state.race.csc.speed;
+            toLog.CSCSpeedSpeed = state.race.csc_speed.speed;
             if (state.race.speed > state.race.maxSpeed) {
                 state.race.maxSpeed = state.race.speed;
             }
@@ -164,7 +164,7 @@ const mutations = {
         }
         let finished = performance.now();
         console.debug(
-            `CSC data: took ${finished - started}`, toLog
+            `CSC Speed data: took ${finished - started}`, toLog
         );
     },
     VIDEOFILE_URL(state, urlObj) {
@@ -196,9 +196,9 @@ const mutations = {
         state.race.currentBPM = 0;
         state.race.startedAt = new Date();
         state.race.finishedAt = null;
-        state.race.csc.time = 0;
-        state.race.csc.revolutions = 0;
-        state.race.csc.points = 0;
+        state.race.csc_speed.time = 0;
+        state.race.csc_speed.revolutions = 0;
+        state.race.csc_speed.points = 0;
         state.race.calories = 0;
         state.race.lastHREvent = 0;
         state.race.currentGPXID = 0;

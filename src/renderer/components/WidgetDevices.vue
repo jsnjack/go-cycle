@@ -119,7 +119,7 @@ export default {
             if (this.isRaceInProgress) {
                 return this.race.speed.toFixed(1);
             }
-            return this.race.csc.speed.toFixed(1);
+            return this.race.csc_speed.speed.toFixed(1);
         },
         getPower: function() {
             return Math.round(this.race.currentPower);

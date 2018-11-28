@@ -24,7 +24,7 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
     type: "ws.device:status",
     data: {
         id: "45:fg:56",
-        recognizedAs: "hr"  # ["hr", "csc"]
+        recognizedAs: "hr"  # ["hr", "csc_speed", "csc_cadence"]
         status: "connected"  # ["connected", "disconnected"]
     }
 }
@@ -36,7 +36,7 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
     type: "ws.device:measurement",
     data: {
         id: "45:fg:56",
-        recognizedAs: "hr",  # ["hr", "csc"]
+        recognizedAs: "hr",  # ["hr", "csc_speed", "csc_cadence"]
         bpm: 86,
         revolutions: 4,
         rev_per_sec: 0.005

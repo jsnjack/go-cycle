@@ -11,7 +11,7 @@ const state = {
             id: null,
             connected: false,
         },
-        csc: {
+        csc_speed: {
             id: null,
             connected: false,
         },
@@ -51,10 +51,10 @@ const state = {
 
         points: 0,
 
-        csc: {
+        csc_speed: {
             speed: 0,
             distance: 0,
-            points: 0, // Amount of recieved datapoints from csc sensor
+            points: 0, // Amount of recieved datapoints from speed sensor
         },
     },
 };

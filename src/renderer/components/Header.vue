@@ -3,7 +3,7 @@
         <div>
             <span @click="finishRace"><FinishIcon v-show="isRaceInProgress" class="icon finish"/></span>
             <HRConnectedIcon class="icon" :class="{offline: isHRConnected}"/>
-            <CSCConnectedIcon class="icon" :class="{offline: isCSCConnected}"/>
+            <CSCSpeedConnectedIcon class="icon" :class="{offline: isCSCSpeedConnected}"/>
             <ConnectedIcon class="icon" :class="{offline: isOffline}"/>
         </div>
     </div>
@@ -12,13 +12,13 @@
 import vuex from "vuex";
 import ConnectedIcon from "../assets/connected.svg";
 import HRConnectedIcon from "../assets/hr-connected.svg";
-import CSCConnectedIcon from "../assets/speed-meter.svg";
+import CSCSpeedConnectedIcon from "../assets/speed-meter.svg";
 import FinishIcon from "../assets/finish.svg";
 
 
 export default {
     name: "Header",
-    components: {ConnectedIcon, HRConnectedIcon, CSCConnectedIcon, FinishIcon},
+    components: {ConnectedIcon, HRConnectedIcon, CSCSpeedConnectedIcon, FinishIcon},
     computed: {
         ...vuex.mapState([
             "ws",
@@ -31,8 +31,8 @@ export default {
         isHRConnected: function() {
             return !this.devices.hr.connected;
         },
-        isCSCConnected: function() {
-            return !this.devices.csc.connected;
+        isCSCSpeedConnected: function() {
+            return !this.devices.csc_speed.connected;
         },
         isRaceInProgress: function() {
             return this.race.startedAt && !this.race.finishedAt;
