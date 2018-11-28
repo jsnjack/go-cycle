@@ -34,7 +34,8 @@ export default {
     },
     methods: {
         onWarmupFinish() {
-            if (!this.race.finishedAt) {
+            if (!this.race.finishedAt && !this.warmupFinished) {
+                this.warmupFinished = true;
                 this.$store.commit("START_RACE");
                 this.$store.dispatch("update_opponent", 0);
             }
@@ -48,6 +49,7 @@ export default {
     data() {
         return {
             warmupStartedAt: new Date().getTime(),
+            warmupFinished: false,
             now: new Date().getTime(),
         };
     },
