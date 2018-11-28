@@ -1,7 +1,7 @@
 <template>
-    <div id="widget-opponents" v-show="race.opponents.length > 1">
+    <div id="widget-opponents" v-show="participants.length > 1">
         <table>
-            <Opponent v-for="item in orderedOpponents"
+            <Opponent v-for="item in participants"
                 :key="item.name"
                 :opponent="item">
             </Opponent>
@@ -11,7 +11,7 @@
 <script>
 import vuex from "vuex";
 import Opponent from "./Opponent";
-import _ from "lodash";
+const updateTablePeriod = 2000;
 
 
 export default {
@@ -19,13 +19,46 @@ export default {
     components: {
         Opponent,
     },
+    created() {
+        for (let i=0; i<this.race.opponents.length; i++) {
+            this.participants.push({
+                name: this.race.opponents[i].name,
+                diffDistance: 0,
+            });
+        }
+        this.interval = setInterval(function() {
+            this.updateDistance();
+        }.bind(this), updateTablePeriod);
+    },
+    beforeDestroy: function() {
+        clearInterval(this.interval);
+    },
+    methods: {
+        updateDistance: function() {
+            let diff = Math.round(this.race.opponents[1].distance - this.race.opponents[0].distance);
+            if (diff > 0) {
+                this.participants[0].diffDistance = diff;
+                this.participants[0].name = this.race.opponents[1].name;
+                this.participants[1].diffDistance = 0;
+                this.participants[1].name = this.race.opponents[0].name;
+            } else {
+                this.participants[0].diffDistance = 0;
+                this.participants[0].name = this.race.opponents[0].name;
+                this.participants[1].diffDistance = diff;
+                this.participants[1].name = this.race.opponents[1].name;
+            }
+        },
+    },
     computed: {
         ...vuex.mapState([
             "race",
         ]),
-        orderedOpponents: function() {
-            return _.reverse(_.orderBy(this.race.opponents, ["distance"]));
-        },
+    },
+    data() {
+        return {
+            participants: [],
+            interval: null,
+        };
     },
 };
 </script>
