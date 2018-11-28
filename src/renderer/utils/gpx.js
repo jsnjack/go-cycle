@@ -57,6 +57,7 @@ function readBlob(blob) {
 
 // Create gpx file out of recorded data
 function createGPX(points, startedAt, gpxData) {
+    // More info https://developers.strava.com/docs/uploads/
     let started = performance.now();
     let offset = 1;
     let DOMParser = require("xmldom").DOMParser;
@@ -85,6 +86,12 @@ function createGPX(points, startedAt, gpxData) {
                 let hr = doc.createElement("heartrate");
                 hr.textContent = dataObj.hr;
                 extensions.appendChild(hr);
+            }
+
+            if (dataObj.cadence) {
+                let cadence = doc.createElement("cadence");
+                cadence.textContent = dataObj.cadence;
+                extensions.appendChild(cadence);
             }
 
             let power = doc.createElement("power");

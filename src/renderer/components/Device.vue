@@ -39,7 +39,8 @@ export default {
         },
         isConnected: function() {
             if ((this.device.id === this.devices.hr.id && this.devices.hr.connected) ||
-                this.device.id === this.devices.csc_speed.id && this.devices.csc_speed.connected) {
+                (this.device.id === this.devices.csc_speed.id && this.devices.csc_speed.connected) ||
+                (this.device.id === this.devices.csc_cadence.id && this.devices.csc_cadence.connected)) {
                 return true;
             }
             return false;

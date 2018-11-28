@@ -18,6 +18,8 @@ const wsMessageHandler = function(app, data) {
             app.$store.commit("MEASUREMENT_HR", msg.data);
         } else if (msg.data.recognizedAs === "csc_speed") {
             app.$store.commit("MEASUREMENT_CSC_SPEED", msg.data);
+        } else if (msg.data.recognizedAs === "csc_cadence") {
+            app.$store.commit("MEASUREMENT_CSC_CADENCE", msg.data);
         } else {
             console.warn("Unrecognized measurement", msg);
         }

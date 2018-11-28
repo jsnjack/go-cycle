@@ -9,6 +9,14 @@
                     {{ race.currentBPM }} <span class="unit">bpm</span>
                 </td>
             </tr>
+            <tr v-show="devices.csc_cadence.id">
+                <td>
+                    <CadenceIcon class="icon"/>
+                </td>
+                <td class="measurement">
+                    {{ race.currentCadence }} <span class="unit">rpm</span>
+                </td>
+            </tr>
             <tr>
                 <td>
                     <SpeedIcon class="icon"/>
@@ -69,6 +77,8 @@ import SpeedIcon from "../assets/speed-meter.svg";
 import CaloriesIcon from "../assets/fire.svg";
 import TimeIcon from "../assets/time.svg";
 import PowerIcon from "../assets/power.svg";
+import CadenceIcon from "../assets/crank-arm.svg";
+
 import {formatTime} from "../utils/time";
 
 
@@ -76,7 +86,7 @@ export default {
     name: "WidgetDevices",
 
     components: {
-        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon, PowerIcon, MountainIcon,
+        HRIcon, DistanceIcon, SpeedIcon, CaloriesIcon, TimeIcon, PowerIcon, MountainIcon, CadenceIcon,
     },
 
     mounted() {

@@ -15,6 +15,10 @@ const state = {
             id: null,
             connected: false,
         },
+        csc_cadence: {
+            id: null,
+            connected: false,
+        },
     },
     user: {
         weight: 78, // kg
@@ -45,6 +49,9 @@ const state = {
         calories: 0, // kCals
         lastHREvent: 0,
         currentPower: 0,
+
+        recentCadences: [], // list of recent cadence measurements
+        currentCadence: 0, // rpm
 
         startedAt: null,
         finishedAt: null,

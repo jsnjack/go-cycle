@@ -51,6 +51,10 @@ const mutations = {
             state.devices.csc_speed.id = data.id;
             state.devices.csc_speed.connected = true;
             break;
+        case "csc_cadence":
+            state.devices.csc_cadence.id = data.id;
+            state.devices.csc_cadence.connected = true;
+            break;
         }
     },
     DEVICE_DISCONNECTED(state, data) {
@@ -68,6 +72,10 @@ const mutations = {
         case "csc_speed":
             state.devices.csc_speed.id = data.id;
             state.devices.csc_speed.connected = false;
+            break;
+        case "csc_cadence":
+            state.devices.csc_cadence.id = data.id;
+            state.devices.csc_cadence.connected = false;
             break;
         }
     },
@@ -152,6 +160,7 @@ const mutations = {
                 distance: state.race.distance,
                 hr: state.race.currentBPM,
                 power: state.race.currentPower,
+                cadence: state.race.currentCadence,
             };
             localStorage.setItem(
                 "trkpt_" + state.race.points,
@@ -165,6 +174,33 @@ const mutations = {
         let finished = performance.now();
         console.debug(
             `CSC Speed data: took ${finished - started}`, toLog
+        );
+    },
+    MEASUREMENT_CSC_CADENCE(state, data) {
+        let started = performance.now();
+        let toLog = {};
+        if (!state.devices.csc_cadence.connected) {
+            this.commit("DEVICE_CONNECTED", data);
+        }
+        let rpm = data.revolutions / (data.time / 1000) * 60 || 0;
+        toLog.rpm = rpm;
+        state.race.recentCadences.push(Math.round(rpm));
+        if (state.race.recentCadences.length > 5) {
+            state.race.recentCadences.shift();
+        }
+        let sum = 0;
+        for (let i=0; i<state.race.recentCadences.length; i++) {
+            let value = state.race.recentCadences[i];
+            if (value !== 0) {
+                sum = sum + state.race.recentCadences[i];
+            }
+        }
+        let currentCadence = Math.round(sum/state.race.recentCadences.length);
+        toLog.currentAvg = currentCadence;
+        state.race.currentCadence = Math.round(sum/state.race.recentCadences.length);
+        let finished = performance.now();
+        console.debug(
+            `CSC Cadence data: took ${finished - started}`, toLog
         );
     },
     VIDEOFILE_URL(state, urlObj) {
@@ -194,6 +230,8 @@ const mutations = {
     START_RACE(state) {
         state.race.currentPower = 0;
         state.race.currentBPM = 0;
+        state.race.recentCadences = [];
+        state.race.currentCadence = 0;
         state.race.startedAt = new Date();
         state.race.finishedAt = null;
         state.race.csc_speed.time = 0;
