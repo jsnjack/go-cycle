@@ -97,7 +97,8 @@ export default {
             if (this.race.distance < 1000) {
                 return Math.round(this.race.distance);
             }
-            return Math.round(this.race.distance / 1000 * 10) / 10;
+            let dist = Math.round(this.race.distance / 1000 * 10) / 10;
+            return dist.toFixed(1);
         },
         getDistanceUnit: function() {
             if (this.race.distance < 1000) {
@@ -124,7 +125,8 @@ export default {
             return Math.round(this.race.currentPower);
         },
         getGrade: function() {
-            return Math.round(this.race.grade * 100 * 10) / 10 || 0.0;
+            let val = Math.round(this.race.grade * 100 * 10) / 10 || 0.0;
+            return val.toFixed(1);
         },
     },
     data() {
