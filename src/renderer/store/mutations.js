@@ -126,18 +126,23 @@ const mutations = {
                 i < state.race.gpxData.length - 1;
                 i++
             ) {
-                state.race.currentGPXID = i;
-                grade = state.race.gpxData[i].grade;
-                if (grade === Infinity) {
-                    grade = 0;
-                }
-                toLog.grade = state.race.gpxData[i].grade;
-                toLog.ele = state.race.gpxData[i].elevation;
-                if (
-                    state.race.gpxData[i].distance <= estDistance &&
-                    state.race.gpxData[i + 1].distance > estDistance
-                ) {
-                    break;
+                // Deal with a bad estimation - happens with crazy high grades
+                if (estDistance < state.race.gpxData[i].distance) {
+                    i = i - 2;
+                } else {
+                    if (
+                        state.race.gpxData[i].distance <= estDistance &&
+                        state.race.gpxData[i + 1].distance > estDistance
+                    ) {
+                        state.race.currentGPXID = i;
+                        grade = state.race.gpxData[i].grade;
+                        if (grade === Infinity) {
+                            grade = 0;
+                        }
+                        toLog.grade = state.race.gpxData[i].grade;
+                        toLog.ele = state.race.gpxData[i].elevation;
+                        break;
+                    }
                 }
             }
             state.race.grade = grade;
