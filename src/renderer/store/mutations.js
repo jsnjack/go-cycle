@@ -64,17 +64,14 @@ const mutations = {
                 break;
             }
         }
-        switch (data.recognizedAs) {
-        case "hr":
-            state.devices.hr.id = data.id;
+        switch (data.id) {
+        case state.devices.hr.id:
             state.devices.hr.connected = false;
             break;
-        case "csc_speed":
-            state.devices.csc_speed.id = data.id;
+        case state.devices.csc_speed.id:
             state.devices.csc_speed.connected = false;
             break;
-        case "csc_cadence":
-            state.devices.csc_cadence.id = data.id;
+        case state.devices.csc_cadence.id:
             state.devices.csc_cadence.connected = false;
             break;
         }

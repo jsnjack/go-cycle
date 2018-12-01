@@ -20,17 +20,29 @@ var HRPeripheral PeripheralType = 1
 // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.cycling_speed_and_cadence.xml
 var CSCPeripheral PeripheralType = 2
 
+// SensorKind kind of the sensor, depends on returned measurements
+type SensorKind string
+
+// HRKind measures heart rate
+var HRKind SensorKind = "hr"
+
+// SpeedKind measures speed
+var SpeedKind SensorKind = "csc_speed"
+
+// CadenceKind measures speed
+var CadenceKind SensorKind = "csc_cadence"
+
 // DiscoveredDevices is a list of discovered Peripheral
 var DiscoveredDevices []gatt.Peripheral
 
-// ActiveDevices ...
-type ActiveDevices struct {
-	HR  HRSensor
-	CSC CSCSensor
+// Sensor represents one of the connected sensors
+type Sensor interface {
+	GetKind() SensorKind
+	GetID() string
 }
 
 // ConnectedDevices ...
-var ConnectedDevices ActiveDevices
+var ConnectedDevices []Sensor
 
 // ConnectToDevice connects to the device with specified ID
 func ConnectToDevice(id string) {
@@ -70,16 +82,6 @@ func GetCharacteristic(p gatt.Peripheral, service *gatt.Service, uuid gatt.UUID)
 		}
 	}
 	return nil, fmt.Errorf("Characteristic %s not found", uuid.String())
-}
-
-// GetActiveDeviceType returns type of active device for status message
-func GetActiveDeviceType(id string) string {
-	if ConnectedDevices.HR.Initialized && ConnectedDevices.HR.GetPeripheral().ID() == id {
-		return "hr"
-	} else if ConnectedDevices.CSC.Initialized && ConnectedDevices.CSC.GetPeripheral().ID() == id {
-		return "csc"
-	}
-	return ""
 }
 
 // GetPeripheralType returns type of the device - HR or CSC
@@ -122,12 +124,12 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	}
 	switch pType {
 	case HRPeripheral:
-		hrsensor := HRSensor{Peripheral: p, Initialized: true}
-		ConnectedDevices.HR = hrsensor
+		hrsensor := HRSensor{Peripheral: p}
+		ConnectedDevices = append(ConnectedDevices, &hrsensor)
 		go hrsensor.Listen()
 	case CSCPeripheral:
-		cscsensor := CSCSensor{Peripheral: p, Initialized: true}
-		ConnectedDevices.CSC = cscsensor
+		cscsensor := CSCSensor{Peripheral: p}
+		ConnectedDevices = append(ConnectedDevices, &cscsensor)
 		go cscsensor.Listen()
 	default:
 		p.Device().CancelConnection(p)
@@ -138,7 +140,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 func onPeriphDisconnected(p gatt.Peripheral, err error) {
 	fmt.Printf("Disconnected %s\n", p.Name())
 
-	msgStatus := DeviceStatusData{ID: p.ID(), Status: "disconnected", RecognizedAs: GetActiveDeviceType(p.ID())}
+	msgStatus := DeviceStatusData{ID: p.ID(), Status: "disconnected"}
 	wsMsgStatus := WSMessage{Type: "ws.device:status", Data: msgStatus}
 	msgB, err := json.Marshal(&wsMsgStatus)
 	if err != nil {
@@ -146,10 +148,11 @@ func onPeriphDisconnected(p gatt.Peripheral, err error) {
 	} else {
 		BroadcastChannel <- msgB
 	}
-	if ConnectedDevices.HR.Initialized && ConnectedDevices.HR.GetPeripheral().ID() == p.ID() ||
-		ConnectedDevices.CSC.Initialized && ConnectedDevices.CSC.GetPeripheral().ID() == p.ID() {
-		Logger.Println("Reconnecting", p.ID())
-		p.Device().Connect(p)
+	for _, item := range ConnectedDevices {
+		if item.GetID() == p.ID() {
+			Logger.Println("Reconnecting", p.ID())
+			p.Device().Connect(p)
+		}
 	}
 }
 

@@ -19,7 +19,6 @@ type ConnectToDeviceData struct {
 
 // DeviceStatusData ...
 type DeviceStatusData struct {
-	ID           string `json:"id"`
-	Status       string `json:"status"`
-	RecognizedAs string `json:"recognizedAs"`
+	ID     string `json:"id"`
+	Status string `json:"status"`
 }

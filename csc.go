@@ -14,10 +14,10 @@ var SpeedServiceUUID = gatt.UUID16(0x1816)
 
 // CSCMessage is a message from the CSC sensor
 type CSCMessage struct {
-	ID           string `json:"id"` // Device id
-	RecognizedAs string `json:"recognizedAs"`
-	Revolutions  uint32 `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
-	Time         uint16 `json:"time"`        // Time since last measurement, ms
+	ID           string     `json:"id"` // Device id
+	RecognizedAs SensorKind `json:"recognizedAs"`
+	Revolutions  uint32     `json:"revolutions"` // Amount of wheel revolutions since last time, for calculating distance
+	Time         uint16     `json:"time"`        // Time since last measurement, ms
 }
 
 // SpeedSensorData is data from the sensor
@@ -28,10 +28,10 @@ type SpeedSensorData struct {
 
 // CSCSensor ...
 type CSCSensor struct {
-	Peripheral  gatt.Peripheral
-	Initialized bool
-	Previous    SpeedSensorData
-	Current     SpeedSensorData
+	Peripheral gatt.Peripheral
+	Previous   SpeedSensorData
+	Current    SpeedSensorData
+	Kind       SensorKind
 }
 
 // Listen ...
@@ -72,22 +72,21 @@ func (sensor *CSCSensor) decode(data []byte) {
 	offset := 1
 	var revolutions uint32
 	var eventTime uint16
-	var kind string
 	switch data[0] {
 	case 1:
 		// Speed sensor
+		sensor.Kind = SpeedKind
 		revolutions = binary.LittleEndian.Uint32(append([]byte(data[offset:])))
 		offset += 4
 		eventTime = binary.LittleEndian.Uint16(append([]byte(data[offset:])))
-		kind = "csc_speed"
 		break
 	case 2:
 		// Cadence sensor
+		sensor.Kind = CadenceKind
 		_revolutions := binary.LittleEndian.Uint16(append([]byte(data[offset:])))
 		revolutions = uint32(_revolutions)
 		offset += 2
 		eventTime = binary.LittleEndian.Uint16(append([]byte(data[offset:])))
-		kind = "csc_cadence"
 		break
 	}
 	cscData := SpeedSensorData{Revolutions: revolutions, EventTime: eventTime}
@@ -105,10 +104,10 @@ func (sensor *CSCSensor) decode(data []byte) {
 	} else {
 		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
 	}
-	Logger.Printf("[%s] Rev: %d, Time: %d\n", kind, sensor.Current.Revolutions, time)
+	Logger.Printf("[%s] Rev: %d, Time: %d\n", sensor.Kind, sensor.Current.Revolutions, time)
 	msgCSC := CSCMessage{
 		ID:           sensor.Peripheral.ID(),
-		RecognizedAs: kind,
+		RecognizedAs: sensor.Kind,
 		Revolutions:  sensor.Current.Revolutions - sensor.Previous.Revolutions,
 		Time:         time,
 	}
@@ -138,11 +137,21 @@ func (sensor *CSCSensor) GetPeripheral() gatt.Peripheral {
 	return sensor.Peripheral
 }
 
+// GetID ...
+func (sensor *CSCSensor) GetID() string {
+	return sensor.Peripheral.ID()
+}
+
+// GetKind ...
+func (sensor *CSCSensor) GetKind() SensorKind {
+	return sensor.Kind
+}
+
 // SendSynthCSCEvent sends synthetic CSC event
 func SendSynthCSCEvent() {
 	msgSpeed := CSCMessage{
 		ID:           "fake-speed-csc",
-		RecognizedAs: "csc_speed",
+		RecognizedAs: SpeedKind,
 		Revolutions:  uint32(Random(4, 6)),
 		Time:         1000,
 	}
@@ -152,7 +161,7 @@ func SendSynthCSCEvent() {
 
 	msgCadence := CSCMessage{
 		ID:           "fake-cadence-csc",
-		RecognizedAs: "csc_cadence",
+		RecognizedAs: CadenceKind,
 		Revolutions:  uint32(Random(1, 3)),
 		Time:         1000,
 	}
