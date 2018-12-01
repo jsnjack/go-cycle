@@ -25,7 +25,7 @@ Incoming to the ws server messages are prefixed with `app.`. Outgoing from the w
     data: {
         id: "45:fg:56",
         recognizedAs: "hr"  # ["hr", "csc_speed", "csc_cadence"]
-        status: "connected"  # ["connected", "disconnected"]
+        status: "disconnected"
     }
 }
 ```

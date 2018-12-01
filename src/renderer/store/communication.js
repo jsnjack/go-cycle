@@ -5,9 +5,7 @@ const wsMessageHandler = function(app, data) {
         app.$store.commit("DEVICE_DISCOVERED", msg.data);
         break;
     case "ws.device:status":
-        if (msg.data.status === "connected") {
-            app.$store.commit("DEVICE_CONNECTED", msg.data);
-        } else if (msg.data.status === "disconnected") {
+        if (msg.data.status === "disconnected") {
             app.$store.commit("DEVICE_DISCONNECTED", msg.data);
         } else {
             console.warn("Unexpected device status", msg);

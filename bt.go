@@ -133,15 +133,6 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 		p.Device().CancelConnection(p)
 		return
 	}
-
-	msgStatus := DeviceStatusData{ID: p.ID(), Status: "connected", RecognizedAs: GetActiveDeviceType(p.ID())}
-	wsMsgStatus := WSMessage{Type: "ws.device:status", Data: msgStatus}
-	msgB, err := json.Marshal(&wsMsgStatus)
-	if err != nil {
-		Logger.Println(err)
-	} else {
-		BroadcastChannel <- msgB
-	}
 }
 
 func onPeriphDisconnected(p gatt.Peripheral, err error) {
