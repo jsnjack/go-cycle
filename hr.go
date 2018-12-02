@@ -7,9 +7,6 @@ import (
 	"github.com/paypal/gatt"
 )
 
-// HRServiceUUID is UUID for heart_rate service
-var HRServiceUUID = gatt.UUID16(0x180d)
-
 // HRMessage is a message from the HR sensor
 type HRMessage struct {
 	ID           string     `json:"id"` // Device id
@@ -19,8 +16,7 @@ type HRMessage struct {
 
 // HRSensor ...
 type HRSensor struct {
-	Peripheral gatt.Peripheral
-	Kind       SensorKind
+	Sensor
 }
 
 // Listen ...
@@ -32,6 +28,13 @@ func (sensor *HRSensor) Listen() {
 
 	if err := sensor.Peripheral.SetMTU(500); err != nil {
 		Logger.Printf("Failed to set MTU, err: %s\n", err)
+	}
+
+	level, err := sensor.GetBatteryLevel()
+	if err != nil {
+		Logger.Println(err)
+	} else {
+		Logger.Printf("Battery: %d\n", level)
 	}
 
 	service, err := GetService(sensor.Peripheral, gatt.UUID16(0x180d))
@@ -82,21 +85,6 @@ func (sensor *HRSensor) decode(data []byte) {
 // GetType returns type of the sensor
 func (sensor *HRSensor) GetType() PeripheralType {
 	return HRPeripheral
-}
-
-// GetPeripheral ...
-func (sensor *HRSensor) GetPeripheral() gatt.Peripheral {
-	return sensor.Peripheral
-}
-
-// GetID ...
-func (sensor *HRSensor) GetID() string {
-	return sensor.Peripheral.ID()
-}
-
-// GetKind ...
-func (sensor *HRSensor) GetKind() SensorKind {
-	return sensor.Kind
 }
 
 // SendSynthHREvent sends synthetic HR event

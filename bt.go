@@ -7,42 +7,17 @@ import (
 	"github.com/paypal/gatt"
 )
 
-// List of services https://www.bluetooth.com/specifications/gatt/services
-
-// PeripheralType contains type of the Peripheral
-type PeripheralType int
-
-// HRPeripheral is a Heart Rate monitor device
-// https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.heart_rate.xml
-var HRPeripheral PeripheralType = 1
-
-// CSCPeripheral is a Speed and cadence device
-// https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.cycling_speed_and_cadence.xml
-var CSCPeripheral PeripheralType = 2
-
-// SensorKind kind of the sensor, depends on returned measurements
-type SensorKind string
-
-// HRKind measures heart rate
-var HRKind SensorKind = "hr"
-
-// SpeedKind measures speed
-var SpeedKind SensorKind = "csc_speed"
-
-// CadenceKind measures speed
-var CadenceKind SensorKind = "csc_cadence"
-
 // DiscoveredDevices is a list of discovered Peripheral
 var DiscoveredDevices []gatt.Peripheral
 
-// Sensor represents one of the connected sensors
-type Sensor interface {
+// SensorI represents one of the connected sensors
+type SensorI interface {
 	GetKind() SensorKind
 	GetID() string
 }
 
 // ConnectedDevices ...
-var ConnectedDevices []Sensor
+var ConnectedDevices []SensorI
 
 // ConnectToDevice connects to the device with specified ID
 func ConnectToDevice(id string) {
@@ -124,11 +99,13 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	}
 	switch pType {
 	case HRPeripheral:
-		hrsensor := HRSensor{Peripheral: p}
+		sensor := Sensor{Peripheral: p}
+		hrsensor := HRSensor{Sensor: sensor}
 		ConnectedDevices = append(ConnectedDevices, &hrsensor)
 		go hrsensor.Listen()
 	case CSCPeripheral:
-		cscsensor := CSCSensor{Peripheral: p}
+		sensor := Sensor{Peripheral: p}
+		cscsensor := CSCSensor{Sensor: sensor}
 		ConnectedDevices = append(ConnectedDevices, &cscsensor)
 		go cscsensor.Listen()
 	default:

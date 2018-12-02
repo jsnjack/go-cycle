@@ -9,9 +9,6 @@ import (
 	"github.com/paypal/gatt"
 )
 
-// SpeedServiceUUID is UUID for cycling_speed_and_cadence service
-var SpeedServiceUUID = gatt.UUID16(0x1816)
-
 // CSCMessage is a message from the CSC sensor
 type CSCMessage struct {
 	ID           string     `json:"id"` // Device id
@@ -28,10 +25,9 @@ type SpeedSensorData struct {
 
 // CSCSensor ...
 type CSCSensor struct {
-	Peripheral gatt.Peripheral
-	Previous   SpeedSensorData
-	Current    SpeedSensorData
-	Kind       SensorKind
+	Sensor
+	Previous SpeedSensorData
+	Current  SpeedSensorData
 }
 
 // Listen ...
@@ -40,6 +36,12 @@ func (sensor *CSCSensor) Listen() {
 	defer func() {
 		sensor.Peripheral.Device().CancelConnection(sensor.Peripheral)
 	}()
+	level, err := sensor.GetBatteryLevel()
+	if err != nil {
+		Logger.Println(err)
+	} else {
+		Logger.Printf("Battery: %d\n", level)
+	}
 	service, err := GetService(sensor.Peripheral, gatt.UUID16(0x1816))
 	if err != nil {
 		Logger.Println(err)
@@ -130,21 +132,6 @@ func (sensor *CSCSensor) hasPrevious() bool {
 // GetType returns type of the sensor
 func (sensor *CSCSensor) GetType() PeripheralType {
 	return CSCPeripheral
-}
-
-// GetPeripheral ...
-func (sensor *CSCSensor) GetPeripheral() gatt.Peripheral {
-	return sensor.Peripheral
-}
-
-// GetID ...
-func (sensor *CSCSensor) GetID() string {
-	return sensor.Peripheral.ID()
-}
-
-// GetKind ...
-func (sensor *CSCSensor) GetKind() SensorKind {
-	return sensor.Kind
 }
 
 // SendSynthCSCEvent sends synthetic CSC event
