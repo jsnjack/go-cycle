@@ -99,7 +99,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	}
 	switch pType {
 	case HRPeripheral:
-		sensor := Sensor{Peripheral: p}
+		sensor := Sensor{Peripheral: p, Kind: HRKind}
 		hrsensor := HRSensor{Sensor: sensor}
 		ConnectedDevices = append(ConnectedDevices, &hrsensor)
 		go hrsensor.Listen()
