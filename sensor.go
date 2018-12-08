@@ -81,6 +81,7 @@ func (sensor *Sensor) ListenChanges() {
 		case "Connected":
 			if !evData.Value.(bool) {
 				sensor.Logger.Println("Disconnected.")
+
 				msgStatus := DeviceStatusData{ID: sensor.Address, Status: "disconnected"}
 				wsMsgStatus := WSMessage{Type: "ws.device:status", Data: msgStatus}
 				msgB, err := json.Marshal(&wsMsgStatus)
@@ -89,6 +90,23 @@ func (sensor *Sensor) ListenChanges() {
 				} else {
 					BroadcastChannel <- msgB
 				}
+
+				for i, address := range ConnectedDevices {
+					if address == sensor.Address {
+						ConnectedDevices = append(ConnectedDevices[:i], ConnectedDevices[i+1:]...)
+					}
+					break
+				}
+				manager, err := api.GetManager()
+				if err != nil {
+					sensor.Logger.Println(err)
+				}
+				sensor.Logger.Println("Refreshing state...")
+				err = manager.RefreshState()
+				if err != nil {
+					sensor.Logger.Println(err)
+				}
+				ConnectToDevice(sensor.Address)
 			}
 			break
 		}

@@ -143,6 +143,7 @@ func ConnectToDevice(address string) {
 	if device.IsConnected() {
 		Logger.Printf("Device %s already connected\n", address)
 	} else {
+		Logger.Printf("Connecting...%s\n", address)
 		err = device.Connect()
 		if err != nil {
 			Logger.Println(err)
