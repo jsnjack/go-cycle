@@ -6,10 +6,10 @@ import (
 )
 
 // SpeedKind measures speed
-var SpeedKind SensorKind = "csc_speed"
+const SpeedKind SensorKind = "csc_speed"
 
 // CadenceKind measures speed
-var CadenceKind SensorKind = "csc_cadence"
+const CadenceKind SensorKind = "csc_cadence"
 
 // CSCMeasuremetCharID is Speed and Cadence Measurement
 const CSCMeasuremetCharID = "2a5b"

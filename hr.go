@@ -6,7 +6,7 @@ import (
 )
 
 // HRKind measures heart rate
-var HRKind SensorKind = "hr"
+const HRKind SensorKind = "hr"
 
 // HRMeasuremetCharID is Heart Rate Measurement
 const HRMeasuremetCharID = "2a37"

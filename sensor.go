@@ -17,6 +17,9 @@ import (
 // SensorKind kind of the sensor, depends on returned measurements
 type SensorKind string
 
+// BatteryLevelCharID is battery level
+const BatteryLevelCharID = "2a19"
+
 // Sensor is a common struct for all sensors
 type Sensor struct {
 	Address  string
@@ -30,6 +33,14 @@ type Sensor struct {
 
 // Listen subscribes to the events
 func (sensor *Sensor) Listen() {
+	go func() {
+		level, err := sensor.GetBatteryLevel()
+		if err != nil {
+			sensor.Logger.Println(err)
+		} else {
+			sensor.Logger.Printf("Battery %d%%\n", level)
+		}
+	}()
 	sensor.Logger.Println("Subscribing for notifications")
 	sensor.ListenChanges()
 
@@ -97,20 +108,41 @@ func (sensor *Sensor) ListenChanges() {
 					}
 					break
 				}
-				manager, err := api.GetManager()
-				if err != nil {
-					sensor.Logger.Println(err)
-				}
-				sensor.Logger.Println("Refreshing state...")
-				err = manager.RefreshState()
-				if err != nil {
-					sensor.Logger.Println(err)
-				}
-				ConnectToDevice(sensor.Address)
+
+				Reconnect(sensor.Address)
 			}
 			break
 		}
 	}))
+}
+
+// GetBatteryLevel returns battery level
+func (sensor *Sensor) GetBatteryLevel() (int, error) {
+	// Get all characteristics
+	charList, err := sensor.Device.GetCharsList()
+	if err != nil {
+		return 0, err
+	}
+
+	for _, charPath := range charList {
+		char, err := sensor.Device.GetChar(fmt.Sprintf("%s", charPath))
+		if err != nil {
+			continue
+		}
+		uuid, err := char.GetProperty("UUID")
+		if err != nil {
+			continue
+		}
+		if fmt.Sprintf("%s", uuid)[4:8] == BatteryLevelCharID {
+			options := make(map[string]dbus.Variant)
+			level, err := char.ReadValue(options)
+			if err != nil {
+				return 0, err
+			}
+			return int(level[0]), nil
+		}
+	}
+	return 0, fmt.Errorf("Device doesn't provide battery information")
 }
 
 func (sensor *Sensor) hasPrevious() bool {

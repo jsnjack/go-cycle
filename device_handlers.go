@@ -5,13 +5,19 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/muka/go-bluetooth/api"
 )
 
-//ConnectedDevices list of connected devices
+var mutex = &sync.Mutex{}
+
+// ConnectedDevices list of connected devices
 var ConnectedDevices []string
+
+// GetCharsAttempts is amount of attempts to get available characteristics
+const GetCharsAttempts = 10
 
 // DiscoveredDevice ...
 type DiscoveredDevice struct {
@@ -64,9 +70,9 @@ func DeviceConnectedHandler(device *api.Device, attempt int) {
 	}
 	deviceLogger.Printf("Discovered %d characteristics", len(charList))
 	if len(charList) == 0 {
-		if attempt < 10 {
+		if attempt < GetCharsAttempts {
 			deviceLogger.Println("Device is not ready. Get characteristics later")
-			go Reconnect(device, attempt)
+			go RetryForChars(device, attempt)
 			return
 		}
 	}
@@ -83,7 +89,6 @@ func DeviceConnectedHandler(device *api.Device, attempt int) {
 			deviceLogger.Println(err)
 			continue
 		}
-		deviceLogger.Printf("  char: %s", uuid)
 		switch fmt.Sprintf("%s", uuid)[4:8] {
 		case HRMeasuremetCharID:
 			deviceLogger.Println("is HR device")
@@ -108,7 +113,6 @@ func DeviceConnectedHandler(device *api.Device, attempt int) {
 			ConnectedDevices = append(ConnectedDevices, addressStr)
 			go sensor.Listen()
 			return
-
 		}
 	}
 	deviceLogger.Println("Device with unknown characteristics")
@@ -118,8 +122,8 @@ func DeviceConnectedHandler(device *api.Device, attempt int) {
 	}
 }
 
-// Reconnect to device (normally when unable to get characteristics)
-func Reconnect(device *api.Device, attempt int) {
+// RetryForChars try to get all chars again
+func RetryForChars(device *api.Device, attempt int) {
 	attempt = attempt + 1
 	device.Disconnect()
 	time.Sleep(5 * time.Second)
@@ -129,11 +133,9 @@ func Reconnect(device *api.Device, attempt int) {
 
 // ConnectToDevice connects to the device with specified ID
 func ConnectToDevice(address string) {
-	for _, cd := range ConnectedDevices {
-		if cd == address {
-			Logger.Printf("Device %s already connected\n", address)
-			return
-		}
+	if IsConnectedDevice(address) {
+		Logger.Printf("Device %s already connected\n", address)
+		return
 	}
 	device, err := api.GetDeviceByAddress(address)
 	if err != nil {
@@ -150,4 +152,38 @@ func ConnectToDevice(address string) {
 		}
 	}
 	DeviceConnectedHandler(device, 0)
+}
+
+// Reconnect to device
+func Reconnect(address string) {
+	Logger.Printf("Reconnecting to device %s", address)
+	manager, err := api.GetManager()
+	if err != nil {
+		Logger.Println(err)
+	}
+	Logger.Println("Refreshing state...")
+	err = manager.RefreshState()
+	if err != nil {
+		Logger.Println(err)
+	}
+	ConnectToDevice(address)
+	// Keep trying until succeded
+	go func() {
+		time.Sleep(5 * time.Second)
+		if !IsConnectedDevice(address) {
+			Reconnect(address)
+		}
+	}()
+}
+
+//IsConnectedDevice returns if device is connected
+func IsConnectedDevice(address string) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	for _, cd := range ConnectedDevices {
+		if cd == address {
+			return true
+		}
+	}
+	return false
 }

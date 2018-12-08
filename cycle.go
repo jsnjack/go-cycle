@@ -48,9 +48,7 @@ func main() {
 
 	Logger.Println("Scanning...")
 	api.On("discovery", emitter.NewCallback(func(ev emitter.Event) {
-		Logger.Println(ev)
 		discoveryEvent := ev.GetData().(api.DiscoveredDeviceEvent)
-		Logger.Println(discoveryEvent, discoveryEvent.Status)
 		device := discoveryEvent.Device
 		DeviceDiscoveredHandler(device)
 	}))
