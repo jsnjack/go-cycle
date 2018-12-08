@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/muka/go-bluetooth/api"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -80,8 +82,8 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 		}
 		switch msg.Type {
 		case "app.bt:scan":
-			for _, p := range DiscoveredDevices {
-				data := DeviceDiscoveredData{Name: p.Name(), ID: p.ID()}
+			for _, d := range DiscoveredDevices {
+				data := DeviceDiscoveredData{Name: d.Name, ID: d.Address}
 				msg := WSMessage{Type: "ws.device:discovered", Data: data}
 				msgByte, _ := json.Marshal(&msg)
 				BroadcastChannel <- msgByte
@@ -95,11 +97,11 @@ func handleWSConnection(w http.ResponseWriter, r *http.Request) {
 				ConnectToDevice(data.ID)
 			}
 		case "app.bt:scan_stop":
-			if len(DiscoveredDevices) > 0 {
-				DiscoveredDevices[0].Device().StopScanning()
-				Logger.Println("Stop scanning")
+			err = api.StopDiscovery()
+			if err != nil {
+				Logger.Println(err)
 			} else {
-				Logger.Println("No discovered devices")
+				Logger.Println("Stop scanning.")
 			}
 		default:
 			Logger.Println("Unhandled message", msg)

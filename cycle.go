@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/paypal/gatt"
-	"github.com/paypal/gatt/examples/option"
+	"github.com/muka/go-bluetooth/api"
+	"github.com/muka/go-bluetooth/emitter"
 )
 
 var debugFlag *bool
@@ -17,6 +17,8 @@ var IgnoredDevices []string
 
 // Logger is the main logger
 var Logger *log.Logger
+
+const adapterID = "hci0"
 
 func init() {
 	debugFlag = flag.Bool("debug", false, "Debug mode")
@@ -40,19 +42,26 @@ func main() {
 	}()
 
 	// Bluetooth section
-	if !*debugFlag {
-		d, err := gatt.NewDevice(option.DefaultClientOptions...)
-		if err != nil {
-			Logger.Fatalf("Failed to open device, err: %s\n", err)
-			return
-		}
-		// Register bluetooth handlers
-		d.Handle(
-			gatt.PeripheralDiscovered(onPeriphDiscovered),
-			gatt.PeripheralConnected(onPeriphConnected),
-			gatt.PeripheralDisconnected(onPeriphDisconnected),
-		)
-		d.Init(onStateChanged)
+
+	// Start discovery on default device
+	api.StartDiscovery()
+
+	Logger.Println("Scanning...")
+	api.On("discovery", emitter.NewCallback(func(ev emitter.Event) {
+		Logger.Println(ev)
+		discoveryEvent := ev.GetData().(api.DiscoveredDeviceEvent)
+		Logger.Println(discoveryEvent, discoveryEvent.Status)
+		device := discoveryEvent.Device
+		DeviceDiscoveredHandler(device)
+	}))
+
+	// Cached devices
+	cached, err := api.GetDevices()
+	if err != nil {
+		Logger.Println(err)
+	}
+	for _, device := range cached {
+		DeviceDiscoveredHandler(&device)
 	}
 
 	select {}

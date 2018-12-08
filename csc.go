@@ -3,11 +3,16 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
-	"math/rand"
-	"time"
-
-	"github.com/paypal/gatt"
 )
+
+// SpeedKind measures speed
+var SpeedKind SensorKind = "csc_speed"
+
+// CadenceKind measures speed
+var CadenceKind SensorKind = "csc_cadence"
+
+// CSCMeasuremetCharID is Speed and Cadence Measurement
+const CSCMeasuremetCharID = "2a5b"
 
 // CSCMessage is a message from the CSC sensor
 type CSCMessage struct {
@@ -23,54 +28,7 @@ type SpeedSensorData struct {
 	EventTime   uint16
 }
 
-// CSCSensor ...
-type CSCSensor struct {
-	Sensor
-	Previous SpeedSensorData
-	Current  SpeedSensorData
-}
-
-// Listen ...
-func (sensor *CSCSensor) Listen() {
-	Logger.Println("Setting up CSC sensor")
-	defer func() {
-		sensor.Peripheral.Device().CancelConnection(sensor.Peripheral)
-	}()
-	level, err := sensor.GetBatteryLevel()
-	if err != nil {
-		Logger.Println(err)
-	} else {
-		Logger.Printf("Battery: %d\n", level)
-	}
-	service, err := GetService(sensor.Peripheral, gatt.UUID16(0x1816))
-	if err != nil {
-		Logger.Println(err)
-		return
-	}
-
-	ch, err := GetCharacteristic(sensor.Peripheral, service, gatt.UUID16(0x2A5B))
-	if err != nil {
-		Logger.Println(err)
-		return
-	}
-
-	_, err = sensor.Peripheral.DiscoverDescriptors(nil, ch)
-	if err != nil {
-		Logger.Println(err)
-		return
-	}
-
-	resultCh := make(chan string)
-	sensor.Peripheral.SetNotifyValue(ch, func(ch *gatt.Characteristic, data []byte, err error) {
-		if err != nil {
-			resultCh <- err.Error()
-		}
-		sensor.decode(data)
-	})
-	<-resultCh
-}
-
-func (sensor *CSCSensor) decode(data []byte) {
+func (sensor *Sensor) handleCSC(data []byte) {
 	offset := 1
 	var revolutions uint32
 	var eventTime uint16
@@ -93,24 +51,24 @@ func (sensor *CSCSensor) decode(data []byte) {
 	}
 	cscData := SpeedSensorData{Revolutions: revolutions, EventTime: eventTime}
 	if sensor.hasPrevious() {
-		sensor.Previous = sensor.Current
-		sensor.Current = cscData
+		sensor.previous = sensor.current
+		sensor.current = cscData
 	} else {
-		sensor.Previous = cscData
-		sensor.Current = cscData
+		sensor.previous = cscData
+		sensor.current = cscData
 		return
 	}
 	var time uint16
-	if sensor.Current.EventTime >= sensor.Previous.EventTime {
-		time = sensor.Current.EventTime - sensor.Previous.EventTime
+	if sensor.current.EventTime >= sensor.previous.EventTime {
+		time = sensor.current.EventTime - sensor.previous.EventTime
 	} else {
-		time = 65535 - sensor.Previous.EventTime + sensor.Current.EventTime + 1
+		time = 65535 - sensor.previous.EventTime + sensor.current.EventTime + 1
 	}
-	Logger.Printf("[%s] Rev: %d, Time: %d\n", sensor.Kind, sensor.Current.Revolutions, time)
+	sensor.Logger.Printf("[%s] Rev: %d, Time: %d\n", sensor.Kind, sensor.current.Revolutions, time)
 	msgCSC := CSCMessage{
-		ID:           sensor.Peripheral.ID(),
+		ID:           sensor.Address,
 		RecognizedAs: sensor.Kind,
-		Revolutions:  sensor.Current.Revolutions - sensor.Previous.Revolutions,
+		Revolutions:  sensor.current.Revolutions - sensor.previous.Revolutions,
 		Time:         time,
 	}
 	msgWS := WSMessage{Type: "ws.device:measurement", Data: msgCSC}
@@ -120,18 +78,6 @@ func (sensor *CSCSensor) decode(data []byte) {
 	} else {
 		BroadcastChannel <- msgB
 	}
-}
-
-func (sensor *CSCSensor) hasPrevious() bool {
-	if sensor.Previous.EventTime != 0 || sensor.Previous.Revolutions != 0 {
-		return true
-	}
-	return false
-}
-
-// GetType returns type of the sensor
-func (sensor *CSCSensor) GetType() PeripheralType {
-	return CSCPeripheral
 }
 
 // SendSynthCSCEvent sends synthetic CSC event
@@ -155,10 +101,4 @@ func SendSynthCSCEvent() {
 	msgWS = WSMessage{Type: "ws.device:measurement", Data: msgCadence}
 	msgB, _ = json.Marshal(msgWS)
 	BroadcastChannel <- msgB
-}
-
-// Random generates random integer number within threshold
-func Random(min, max int) int {
-	rand.Seed(time.Now().Unix())
-	return rand.Intn(max-min) + min
 }
