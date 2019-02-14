@@ -198,7 +198,7 @@ function calculateGrade(container) {
     for (let i=1; i<container.length - 1; i++) {
         let fragment = container[i].distance - container[i-1].distance;
         let grade = (container[i].elevation - container[i-1].elevation) / fragment;
-        if (grade === Infinity) {
+        if (grade === Infinity || grade === -Infinity) {
             grade = 0;
         }
         container[i].grade = grade;
