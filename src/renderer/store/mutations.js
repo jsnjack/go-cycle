@@ -188,15 +188,21 @@ const mutations = {
             state.race.recentCadences.shift();
         }
         let sum = 0;
+        let sampleSize = state.race.recentCadences.length;
         for (let i=0; i<state.race.recentCadences.length; i++) {
             let value = state.race.recentCadences[i];
             if (value !== 0) {
                 sum = sum + state.race.recentCadences[i];
+            } else {
+                sampleSize = sampleSize - 1;
             }
         }
-        let currentCadence = Math.round(sum/state.race.recentCadences.length);
+        let currentCadence = 0;
+        if (sampleSize > 0) {
+            currentCadence = Math.round(sum/sampleSize);
+        }
         toLog.currentAvg = currentCadence;
-        state.race.currentCadence = Math.round(sum/state.race.recentCadences.length);
+        state.race.currentCadence = currentCadence;
         let finished = performance.now();
         console.debug(
             `CSC Cadence data: took ${finished - started}`, toLog
