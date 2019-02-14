@@ -1,7 +1,5 @@
 const R = 6371000;
 // Check Exponential Moving Average https://docs.oracle.com/cd/E57185_01/IRWUG/ch12s07s05.html
-const SampleWindow = 3;
-const SmoothingConstant = 2 / (1 + SampleWindow);
 
 /* eslint-disable max-len */
 // A template for creating a gpx file
@@ -170,17 +168,27 @@ function extractDataFromGPX(doc) {
             ).getTime() - baseTime;
         }
     }
-    container = calculateGrade(smoothElevation(container));
+    container = calculateGrade(smoothMovingAverage(container));
     let finished = performance.now();
     console.debug("Extracting data from GPX took, ms:", finished - started);
     return container;
 }
 
 // Smootherns elevation data
-function smoothElevation(container) {
-    for (let i=1; i<container.length - 1; i++) {
-        let prevEMA = container[i-1].elevation;
-        container[i].elevation = (SmoothingConstant * (container[i].elevation - prevEMA)) + prevEMA;
+function smoothMovingAverage(container, sampleSize=10) {
+    for (let i=0; i<container.length - 1; i++) {
+        let sum = 0;
+        if (i < container.length - 1 - sampleSize) {
+            for (let j=i; j < i + sampleSize; j++) {
+                sum = sum + container[j].elevation;
+            }
+        } else {
+            for (let j=container.length - 1 - sampleSize; j < container.length - 1; j++) {
+                sum = sum + container[j].elevation;
+            }
+        }
+        let ma = sum / sampleSize;
+        container[i].elevation = ma;
     }
     return container;
 }
