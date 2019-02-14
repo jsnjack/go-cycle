@@ -168,27 +168,28 @@ function extractDataFromGPX(doc) {
             ).getTime() - baseTime;
         }
     }
-    container = calculateGrade(smoothMovingAverage(container));
+    container = calculateGrade(smoothMovingAverage(container, "elevation", 25));
+    container = smoothMovingAverage(container, "grade", 5);
     let finished = performance.now();
     console.debug("Extracting data from GPX took, ms:", finished - started);
     return container;
 }
 
 // Smootherns elevation data
-function smoothMovingAverage(container, sampleSize=10) {
+function smoothMovingAverage(container, field, sampleSize) {
     for (let i=0; i<container.length - 1; i++) {
         let sum = 0;
         if (i < container.length - 1 - sampleSize) {
             for (let j=i; j < i + sampleSize; j++) {
-                sum = sum + container[j].elevation;
+                sum = sum + container[j][field];
             }
         } else {
             for (let j=container.length - 1 - sampleSize; j < container.length - 1; j++) {
-                sum = sum + container[j].elevation;
+                sum = sum + container[j][field];
             }
         }
         let ma = sum / sampleSize;
-        container[i].elevation = ma;
+        container[i][field] = ma;
     }
     return container;
 }
