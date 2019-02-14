@@ -133,9 +133,6 @@ const mutations = {
                     ) {
                         state.race.currentGPXID = i;
                         grade = state.race.gpxData[i].grade;
-                        if (grade === Infinity) {
-                            grade = 0;
-                        }
                         toLog.grade = state.race.gpxData[i].grade;
                         toLog.ele = state.race.gpxData[i].elevation;
                         break;

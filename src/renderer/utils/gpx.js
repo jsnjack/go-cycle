@@ -197,7 +197,11 @@ function smoothMovingAverage(container, sampleSize=10) {
 function calculateGrade(container) {
     for (let i=1; i<container.length - 1; i++) {
         let fragment = container[i].distance - container[i-1].distance;
-        container[i].grade = (container[i].elevation - container[i-1].elevation) / fragment;
+        let grade = (container[i].elevation - container[i-1].elevation) / fragment;
+        if (grade === Infinity) {
+            grade = 0;
+        }
+        container[i].grade = grade;
     }
     return container;
 }
