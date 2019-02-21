@@ -184,7 +184,7 @@ const mutations = {
         let rpm = data.revolutions / (data.time / 1000) * 60 || 0;
         toLog.rpm = rpm;
         state.race.recentCadences.push(Math.round(rpm));
-        if (state.race.recentCadences.length > 5) {
+        if (state.race.recentCadences.length > 3) {
             state.race.recentCadences.shift();
         }
         let sum = 0;
