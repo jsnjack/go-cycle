@@ -156,7 +156,8 @@ func ConnectToDevice(address string) {
 
 // Reconnect to device
 func Reconnect(address string) {
-	Logger.Printf("Reconnecting to device %s", address)
+	Logger.Printf("Reconnecting to device in 3 %s", address)
+	time.Sleep(3 * time.Second)
 	manager, err := api.GetManager()
 	if err != nil {
 		Logger.Println(err)

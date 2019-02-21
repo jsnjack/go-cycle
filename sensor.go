@@ -102,12 +102,14 @@ func (sensor *Sensor) ListenChanges() {
 					BroadcastChannel <- msgB
 				}
 
+				mutex.Lock()
 				for i, address := range ConnectedDevices {
 					if address == sensor.Address {
 						ConnectedDevices = append(ConnectedDevices[:i], ConnectedDevices[i+1:]...)
 					}
 					break
 				}
+				mutex.Unlock()
 
 				Reconnect(sensor.Address)
 			}
