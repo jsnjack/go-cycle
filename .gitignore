@@ -10,3 +10,4 @@ thumbs.db
 !.gitkeep
 go-cycle
 .monova.history
+vendor/
