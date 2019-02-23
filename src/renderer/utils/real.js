@@ -129,20 +129,11 @@ function getMinPositive(a) {
 
 // Ensures the value is sane (no Nan, Infinity and etc..)
 function ensureSane(value, limit=1000) {
-    switch (value) {
-    case Infinity:
-        value = 0;
-        break;
-    case -Infinity:
-        value = 0;
-        break;
-    case NaN:
-        value = 0;
-        break;
-    default:
-        if (value > limit) {
-            value = 0;
-        }
+    if (isFinite(value) || isNaN(value)) {
+        return 0;
+    }
+    if (value > limit) {
+        return 0;
     }
     return value;
 }
