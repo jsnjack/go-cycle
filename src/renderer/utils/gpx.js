@@ -1,3 +1,5 @@
+import real from "./real";
+
 const R = 6371000;
 // Check Exponential Moving Average https://docs.oracle.com/cd/E57185_01/IRWUG/ch12s07s05.html
 
@@ -199,9 +201,7 @@ function calculateGrade(container) {
     for (let i=1; i<container.length - 1; i++) {
         let fragment = container[i].distance - container[i-1].distance;
         let grade = (container[i].elevation - container[i-1].elevation) / fragment;
-        if (grade === Infinity || grade === -Infinity) {
-            grade = 0;
-        }
+        grade = real.ensureSane(grade, 1);
         container[i].grade = grade;
     }
     return container;

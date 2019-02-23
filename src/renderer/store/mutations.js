@@ -140,11 +140,11 @@ const mutations = {
                 }
             }
             state.race.grade = grade;
-            state.race.speed = real.getRealSpeed(
+            state.race.speed = real.ensureSane(real.getRealSpeed(
                 state.race.csc_speed.speed,
                 grade,
                 state.user.weight
-            );
+            ), 200);
             toLog.speed = state.race.speed;
             toLog.CSCSpeedSpeed = state.race.csc_speed.speed;
             if (state.race.speed > state.race.maxSpeed) {
@@ -181,10 +181,8 @@ const mutations = {
         if (!state.devices.csc_cadence.connected) {
             this.commit("DEVICE_CONNECTED", data);
         }
-        let rpm = data.revolutions / (data.time / 1000) * 60 || 0;
-        if (rpm > 200) {
-            rpm = 0;
-        }
+        let rpm = data.revolutions / (data.time / 1000) * 60;
+        rpm = real.ensureSane(rpm, 200);
         toLog.rpm = rpm;
         state.race.recentCadences.push(Math.round(rpm));
         if (state.race.recentCadences.length > 3) {
@@ -203,6 +201,7 @@ const mutations = {
         let currentCadence = 0;
         if (sampleSize > 0) {
             currentCadence = Math.round(sum/sampleSize);
+            currentCadence = real.ensureSane(currentCadence, 200);
         }
         toLog.currentAvg = currentCadence;
         state.race.currentCadence = currentCadence;
