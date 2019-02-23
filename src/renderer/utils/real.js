@@ -129,11 +129,11 @@ function getMinPositive(a) {
 
 // Ensures the value is sane (no Nan, Infinity and etc..)
 function ensureSane(value, limit=1000) {
-    if (isFinite(value) || isNaN(value)) {
-        return 0;
+    if (!isFinite(value) || isNaN(value)) {
+        value = 0;
     }
     if (value > limit) {
-        return 0;
+        value = 0;
     }
     return value;
 }
