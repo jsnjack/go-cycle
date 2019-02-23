@@ -182,6 +182,9 @@ const mutations = {
             this.commit("DEVICE_CONNECTED", data);
         }
         let rpm = data.revolutions / (data.time / 1000) * 60 || 0;
+        if (rpm > 200) {
+            rpm = 0;
+        }
         toLog.rpm = rpm;
         state.race.recentCadences.push(Math.round(rpm));
         if (state.race.recentCadences.length > 3) {
