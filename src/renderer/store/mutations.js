@@ -106,9 +106,9 @@ const mutations = {
         }
         state.race.csc_speed.distance =
             (data.revolutions * state.user.wheelSize) / 1000 || 0;
-        state.race.csc_speed.speed = real.toKMH(
+        state.race.csc_speed.speed = real.ensureSane(real.toKMH(
             state.race.csc_speed.distance / (data.time / 1000) || 0
-        );
+        ), 100);
         try {
             state.race.currentPower = trainer.getYfromX(state.race.csc_speed.speed);
         } catch (e) {
