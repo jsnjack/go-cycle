@@ -7,6 +7,7 @@ let defaultAvailableDevice = {
 import utils from "../utils/gpx";
 import real from "../utils/real";
 import trainer from "../trainers/cycleops_fluid";
+import {saveConfig} from "../utils/config";
 
 const mutations = {
     WS_CONNECTED(state, connection) {
@@ -277,6 +278,7 @@ const mutations = {
                 console.warn("Unknown state.user key:", key);
             }
         });
+        saveConfig(state.user);
     },
 };
 

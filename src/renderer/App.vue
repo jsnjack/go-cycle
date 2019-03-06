@@ -9,11 +9,13 @@
 import vuex from "vuex";
 import Header from "./components/Header";
 import wsMessageHandler from "./store/communication";
+import {loadConfig} from "./utils/config";
 
 export default {
     name: "App",
     components: {Header},
     mounted() {
+        this.restoreState();
         this.connect();
     },
     computed: {
@@ -46,6 +48,9 @@ export default {
                     this.$router.push("connect");
                 }
             });
+        },
+        restoreState: function() {
+            this.$store.commit("UPDATE_USER", loadConfig());
         },
     },
 };
