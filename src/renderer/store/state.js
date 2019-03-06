@@ -25,7 +25,7 @@ const state = {
         gender: "m", // male
         age: 30,
         wheelSize: "2136", // mm
-        stravaAccessToken: window.process.env.GO_CYCLE_STRAVA_TOKEN,
+        stravaAccessToken: "",
         warmUpDuration: 5 * 60, // s
     },
     race: {
