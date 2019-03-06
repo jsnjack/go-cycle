@@ -104,19 +104,19 @@ export default {
             this.$store.commit("UPDATE_SIMPLE_ROUTE_DISTANCE", event.target.value);
         },
         updateWeight(event) {
-            this.$store.commit("UPDATE_USER_WEIGHT", event.target.value);
+            this.$store.commit("UPDATE_USER", {"weight": event.target.value});
         },
         updateWarmUpDuration(event) {
-            this.$store.commit("UPDATE_WARM_UP_DURATION", event.target.value);
+            this.$store.commit("UPDATE_USER", {"warmUpDuration": event.target.value});
         },
         updateWheelSize(event) {
-            this.$store.commit("UPDATE_USER_WHEEL_SIZE", event.target.value);
+            this.$store.commit("UPDATE_USER", {"wheelSize": event.target.value});
         },
         updateAge(event) {
-            this.$store.commit("UPDATE_USER_AGE", event.target.value);
+            this.$store.commit("UPDATE_USER", {"age": event.target.value});
         },
         updateGender(event) {
-            this.$store.commit("UPDATE_USER_GENDER", event.target.value);
+            this.$store.commit("UPDATE_USER", {"gender": event.target.value});
         },
     },
 };

@@ -257,26 +257,26 @@ const mutations = {
     FINISH_RACE(state) {
         state.race.finishedAt = new Date();
     },
-    UPDATE_USER_WEIGHT(state, value) {
-        state.user.weight = parseInt(value, 10);
-    },
-    UPDATE_USER_GENDER(state, value) {
-        state.user.gender = value;
-    },
-    UPDATE_USER_AGE(state, value) {
-        state.user.age = parseInt(value, 10);
-    },
-    UPDATE_WARM_UP_DURATION(state, value) {
-        state.user.warmUpDuration = parseInt(value, 10);
-    },
-    UPDATE_USER_WHEEL_SIZE(state, value) {
-        state.user.wheelSize = value;
-    },
-    UPDATE_SIMPLE_ROUTE_DISTANCE(state, value) {
-        state.race.totalDistance = parseInt(value, 10);
-    },
     SET_OPPONENT_DISTANCE(state, obj) {
         state.race.opponents[obj.id].distance = obj.distance;
+    },
+    UPDATE_USER(state, obj) {
+        Object.keys(obj).forEach((key) => {
+            switch (key) {
+            case "weight":
+            case "age":
+            case "warmUpDuration":
+                state.user[key] = parseInt(obj[key], 10);
+                break;
+            case "gender":
+            case "wheelSize":
+            case "stravaAccessToken":
+                state.user[key] = obj[key];
+                break;
+            default:
+                console.warn("Unknown state.user key:", key);
+            }
+        });
     },
 };
 
