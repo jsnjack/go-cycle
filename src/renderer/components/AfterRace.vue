@@ -25,7 +25,8 @@
         </table>
 
         <div class="controls-container">
-            <button v-show="isStravaReady" class="button-control" @click="onUpload">Upload activity</button>
+            <button v-show="!!user.stravaAccessToken && !uploaded"
+                    class="button-control" @click="onUpload">Upload activity</button>
             <button class="button-control" @click="onNew">New race</button>
         </div>
     </div>
@@ -36,7 +37,7 @@ import {formatTime} from "../utils/time";
 import utils from "../utils/gpx";
 
 let fs = require("fs");
-const stravaUploadURL = "https://www.strava.com/api/v3/uploads";
+const activityUploadURL = "https://gocycle.space/upload";
 
 export default {
     name: "AfterRace",
@@ -61,9 +62,6 @@ export default {
             // Total distance in km
             return Math.round(this.race.distance / 1000 * 10) / 10 || 0;
         },
-        isStravaReady: function() {
-            return !!this.user.stravaAccessToken;
-        },
         calories: function() {
             return Math.round(this.race.calories);
         },
@@ -85,20 +83,23 @@ export default {
                 console.log(`File ${filePath} created`);
             });
 
-            formData.append("activity_type", "virtualride");
+            formData.append("authid", this.user.stravaAccessToken);
             formData.append("file", new File([gpxData], "activity.gpx", {type: "text/xml"}));
-            formData.append("data_type", "gpx");
-            formData.append("name", "go-cycle activity");
-            fetch(stravaUploadURL, {
+            fetch(activityUploadURL, {
                 method: "POST",
                 body: formData,
-                headers: new Headers({
-                    "Authorization": "Bearer " + this.user.stravaAccessToken,
-                }),
             }).then((response) => response.json())
                 .catch((error) => console.error("Error:", error))
-                .then((response) => console.log("Success:", response));
+                .then((response) => {
+                    console.log("Success:", response);
+                    this.uploaded = true;
+                });
         },
+    },
+    data() {
+        return {
+            uploaded: false,
+        };
     },
 };
 </script>

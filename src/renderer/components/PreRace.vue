@@ -61,6 +61,9 @@
                         <div class="info">Or provide the distance manually, m</div>
                         <input id="simple-route-distance" type="number" @change="updateSimpleRouteDistance"/>
                     </div>
+                <div v-show="!user.stravaAccessToken" class="stravaicon" @click="onStravaConnect">
+                    <StravaIcon />
+                </div>
             </div>
         </div>
 
@@ -73,9 +76,13 @@
 <script>
 import vuex from "vuex";
 import utils from "../utils/gpx";
+import StravaIcon from "../assets/strava.svg";
 
 export default {
     name: "PreRace",
+    components: {
+        StravaIcon,
+    },
     computed: {
         ...vuex.mapState([
             "race",
@@ -85,6 +92,9 @@ export default {
     methods: {
         onBack() {
             this.$router.push("connect");
+        },
+        onStravaConnect() {
+            this.$router.push("stravaconnect");
         },
         onStart() {
             this.$store.commit("NEW_RACE");
@@ -117,6 +127,9 @@ export default {
         },
         updateGender(event) {
             this.$store.commit("UPDATE_USER", {"gender": event.target.value});
+        },
+        isStravaConnected: function() {
+            return !!this.user.stravaAccessToken;
         },
     },
 };
@@ -157,6 +170,9 @@ export default {
     }
     .row {
         margin-bottom: 1rem;
+    }
+    .stravaicon {
+        cursor: pointer;
     }
 
 </style>

@@ -5,6 +5,7 @@ import Loading from "@/components/Loading";
 import PreRace from "@/components/PreRace";
 import Race from "@/components/Race";
 import AfterRace from "@/components/AfterRace";
+import StravaConnect from "@/components/StravaConnect";
 
 
 Vue.use(Router);
@@ -35,6 +36,11 @@ export default new Router({
             path: "/afterrace",
             name: "afterrace",
             component: AfterRace,
+        },
+        {
+            path: "/stravaconnect",
+            name: "stravaconnect",
+            component: StravaConnect,
         },
     ],
 });
