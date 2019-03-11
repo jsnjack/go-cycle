@@ -36,7 +36,10 @@ import vuex from "vuex";
 import {formatTime} from "../utils/time";
 import utils from "../utils/gpx";
 
-let fs = require("fs");
+const fs = require("fs");
+const electron = require("electron");
+const path = require("path");
+const userDataPath = (electron.app || electron.remote.app).getPath("userData");
 const activityUploadURL = "https://gocycle.space/upload";
 
 export default {
@@ -71,9 +74,9 @@ export default {
             this.$router.push("prerace");
         },
         onUpload: function() {
-            let gpxData = utils.createGPX(this.race.points, this.race.startedAt.toISOString(), this.race.gpxData);
+            const gpxData = utils.createGPX(this.race.points, this.race.startedAt.toISOString(), this.race.gpxData);
             let formData = new FormData();
-            let filePath = new Date().getTime() + ".gpx";
+            const filePath = path.join(userDataPath, new Date().getTime() + ".gpx");
 
             fs.writeFile(filePath, gpxData, "utf8", (err) => {
                 if (err) {
